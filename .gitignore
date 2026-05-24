@@ -27,3 +27,6 @@ vscode/
 # OS-specific files
 DS_Store
 Thumbs.db
+# Agents
+.agents/
+PLAN.md

@@ -1,0 +1,68 @@
+<div class="mx-auto flex max-w-6xl flex-col gap-8">
+  <header class="flex flex-col gap-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-slate-500">
+      Clientes
+    </div>
+    <h1 class="text-4xl font-semibold text-slate-900">
+      Gestion de clientes
+    </h1>
+    <p class="max-w-2xl text-sm text-slate-600">
+      Registra clientes para asociar ventas y consulta el historial rapido.
+    </p>
+  </header>
+
+  <section class="panel rounded-3xl p-6">
+    <form
+      method="get"
+      class="grid gap-4 lg:grid-cols-[2fr_auto_auto]"
+      hx-get="{% url 'sales:customers' %}"
+      hx-target="#dashboard-content"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      hx-indicator="#nav-spinner"
+    >
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Buscar
+        <input
+          type="search"
+          name="q"
+          value="{{ filters.q }}"
+          placeholder="Nombre, documento o correo"
+          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
+        >
+      </label>
+      <button type="submit" class="btn btn-primary btn-lg self-end">
+        Filtrar
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline btn-lg self-end"
+        hx-get="{% url 'sales:customer_create' %}?current_q={{ current_q|urlencode }}"
+        hx-target="#customer-form-panel"
+        hx-swap="innerHTML"
+        hx-indicator="#nav-spinner"
+      >
+        Nuevo cliente
+      </button>
+    </form>
+  </section>
+
+  <section class="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+    <div class="panel rounded-3xl p-6">
+      <div class="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
+        <span>Clientes</span>
+        <span>{{ customer_count|default:0 }} registros</span>
+      </div>
+
+      <div id="customer-table">
+        {% include "sales/partials/customer_table.html" %}
+      </div>
+    </div>
+
+    <aside class="panel rounded-3xl p-6">
+      <div id="customer-form-panel">
+        {% include "sales/partials/customer_form.html" with form=form form_title="Nuevo cliente" submit_label="Guardar" current_q=current_q %}
+      </div>
+    </aside>
+  </section>
+</div>

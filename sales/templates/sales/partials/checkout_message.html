@@ -1,0 +1,15 @@
+{% if status == "success" %}
+<div role="alert" class="alert alert-success">
+  <div>
+    <div class="font-semibold">Venta exitosa</div>
+    <div class="text-sm">Ticket #{{ sale.id }}</div>
+  </div>
+</div>
+{% else %}
+<div role="alert" class="alert alert-error">
+  <div>
+    <div class="font-semibold">No se pudo cobrar</div>
+    <div class="text-sm">{{ message }}</div>
+  </div>
+</div>
+{% endif %}

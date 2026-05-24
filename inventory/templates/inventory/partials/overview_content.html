@@ -1,0 +1,81 @@
+<div class="mx-auto flex max-w-6xl flex-col gap-8">
+  <header class="flex flex-col gap-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-slate-500">
+      Inventario
+    </div>
+    <h1 class="text-4xl font-semibold text-slate-900">
+      Catalogo de productos
+    </h1>
+    <p class="max-w-2xl text-sm text-slate-600">
+      Consulta stock, precios y alertas de reposicion.
+    </p>
+  </header>
+
+  <section class="panel rounded-3xl p-6">
+    <form
+      method="get"
+      class="grid gap-4 lg:grid-cols-[2fr_1fr_auto_auto]"
+      hx-get="{% url 'inventory:overview' %}"
+      hx-target="#dashboard-content"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      hx-indicator="#nav-spinner"
+    >
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Buscar
+        <input
+          type="search"
+          name="q"
+          value="{{ filters.q }}"
+          placeholder="Nombre o codigo"
+          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
+        >
+      </label>
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Bajo stock
+        <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+          <input
+            type="checkbox"
+            name="low"
+            value="1"
+            class="toggle toggle-sm"
+            {% if filters.low %}checked{% endif %}
+          >
+          <span class="text-xs text-slate-500">Solo alertas</span>
+        </div>
+      </label>
+      <button type="submit" class="btn btn-primary btn-lg self-end">
+        Filtrar
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline btn-lg self-end"
+        hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q }}&current_low={{ current_low }}"
+        hx-target="#inventory-form-panel"
+        hx-swap="innerHTML"
+        hx-indicator="#nav-spinner"
+      >
+        Nuevo producto
+      </button>
+    </form>
+  </section>
+
+  <section class="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+    <div class="panel rounded-3xl p-6">
+      <div class="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
+        <span>Productos activos</span>
+        <span>{{ product_count|default:0 }} items</span>
+      </div>
+
+      <div id="inventory-table">
+        {% include "inventory/partials/product_table.html" %}
+      </div>
+    </div>
+
+    <aside class="panel rounded-3xl p-6">
+      <div id="inventory-form-panel">
+        {% include "inventory/partials/product_form.html" with form=form form_title="Nuevo producto" submit_label="Guardar" current_q=current_q current_low=current_low %}
+      </div>
+    </aside>
+  </section>
+</div>

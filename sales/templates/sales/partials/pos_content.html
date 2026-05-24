@@ -1,0 +1,145 @@
+{% load l10n %}
+<div class="mx-auto flex max-w-6xl flex-col gap-8">
+  <header class="flex flex-col gap-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-slate-500">
+      Caja / POS
+    </div>
+    <h1 class="text-4xl font-semibold text-slate-900">
+      Caja rapida
+    </h1>
+    <p class="max-w-2xl text-sm text-slate-600">
+      Busca productos por codigo o nombre, agrega al carrito y cobra sin
+      recargar la pagina.
+    </p>
+  </header>
+
+  <section
+    x-data="posCart({ currency: '{{ currency|escapejs }}', decimals: {{ currency_decimals|default:2 }}, taxRate: {{ tax_rate|unlocalize }} })"
+    x-on:sale-completed.window="clearCart()"
+    class="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]"
+  >
+    <div class="panel rounded-3xl p-6">
+      <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div class="flex-1">
+            <label class="text-xs uppercase tracking-[0.2em] text-slate-500" for="product-search">
+              Busqueda
+            </label>
+            <div class="mt-2 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+              <div class="h-2 w-2 rounded-full bg-slate-400"></div>
+              <input
+                id="product-search"
+                type="search"
+                name="q"
+                placeholder="Codigo o nombre"
+                class="w-full bg-transparent text-base text-slate-800 outline-none"
+                hx-get="{% url 'inventory:product_search' %}"
+                hx-trigger="keyup changed delay:300ms"
+                hx-target="#product-results"
+                hx-indicator="#search-spinner"
+              >
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-500">
+            <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold">
+              IGV 18%
+            </span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold">
+              {{ currency }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
+          <span>Resultados</span>
+          <span id="search-spinner" class="htmx-indicator">Buscando...</span>
+        </div>
+
+        <div id="product-results">
+          {% include "inventory/partials/product_results.html" with products=products currency=currency %}
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel rounded-3xl p-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-slate-900">Carrito</h2>
+        <button
+          type="button"
+          class="btn btn-ghost btn-xs uppercase tracking-[0.2em]"
+          @click="clearCart()"
+          :disabled="items.length === 0"
+        >
+          Limpiar
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-3">
+        <template x-if="items.length === 0">
+          <div class="rounded-2xl border border-dashed border-slate-200 bg-white/70 px-4 py-6 text-center text-sm text-slate-500">
+            Aun no hay productos.
+          </div>
+        </template>
+
+        <template x-for="item in items" :key="item.id">
+          <div class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div class="text-sm font-semibold text-slate-900" x-text="item.name"></div>
+              <div class="text-xs text-slate-500" x-text="item.barcode"></div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" class="btn btn-xs" @click="decrement(item.id)">-</button>
+              <input
+                type="number"
+                min="1"
+                class="w-16 rounded-lg border border-slate-200 bg-white px-2 py-1 text-center text-sm"
+                x-model.number="item.quantity"
+                @change="normalizeQuantity(item)"
+              >
+              <button type="button" class="btn btn-xs" @click="increment(item.id)">+</button>
+            </div>
+            <div class="text-right">
+              <div class="text-xs uppercase tracking-[0.2em] text-slate-400">Total</div>
+              <div class="text-sm font-semibold text-slate-900" x-text="formatMoney(item.unitPrice * item.quantity)"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="mt-6 rounded-2xl bg-slate-900 px-4 py-4 text-white">
+        <div class="flex items-center justify-between text-sm text-slate-200">
+          <span>Subtotal</span>
+          <span x-text="formatMoney(subtotal())"></span>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-sm text-slate-200">
+          <span>IGV</span>
+          <span x-text="formatMoney(taxAmount())"></span>
+        </div>
+        <div class="mt-4 flex items-center justify-between text-lg font-semibold">
+          <span>Total</span>
+          <span x-text="formatMoney(total())"></span>
+        </div>
+      </div>
+
+      <form
+        class="mt-4 space-y-3"
+        hx-post="{% url 'sales:checkout' %}"
+        hx-target="#checkout-message"
+        hx-swap="innerHTML"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="items" :value="serializedItems()">
+        <input type="hidden" name="tax_rate" :value="taxRate.toFixed(4)">
+        <button
+          type="submit"
+          class="btn btn-primary btn-block text-base"
+          :disabled="items.length === 0"
+        >
+          Cobrar
+        </button>
+      </form>
+
+      <div id="checkout-message" class="mt-4" aria-live="polite"></div>
+    </aside>
+  </section>
+</div>

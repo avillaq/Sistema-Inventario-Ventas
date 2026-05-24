@@ -1,0 +1,132 @@
+<div class="flex items-center justify-between">
+  <div class="text-xs uppercase tracking-[0.2em] text-slate-500">
+    {{ form_title }}
+  </div>
+  {% if product %}
+  <button
+    type="button"
+    class="btn btn-ghost btn-xs"
+    hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}"
+    hx-target="#inventory-form-panel"
+    hx-swap="innerHTML"
+    hx-indicator="#nav-spinner"
+  >
+    Nuevo
+  </button>
+  {% endif %}
+</div>
+
+{% if success_message %}
+<div role="alert" class="alert alert-success mt-4">
+  <div class="text-sm">{{ success_message }}</div>
+</div>
+{% endif %}
+
+{% if form.non_field_errors %}
+<div role="alert" class="alert alert-error mt-4">
+  <div class="text-sm">{{ form.non_field_errors|striptags }}</div>
+</div>
+{% endif %}
+
+<form
+  class="mt-4 space-y-4"
+  method="post"
+  hx-post="{% if product %}{% url 'inventory:product_edit' product.id %}{% else %}{% url 'inventory:product_create' %}{% endif %}"
+  hx-target="#inventory-form-panel"
+  hx-swap="innerHTML"
+>
+  {% csrf_token %}
+  <input type="hidden" name="current_q" value="{{ current_q }}">
+  <input type="hidden" name="current_low" value="{{ current_low }}">
+
+  <div class="grid gap-3">
+    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+      Codigo
+      {{ form.barcode }}
+      {% if form.barcode.errors %}
+      <span class="text-xs text-error">{{ form.barcode.errors|striptags }}</span>
+      {% endif %}
+    </label>
+    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+      Nombre
+      {{ form.name }}
+      {% if form.name.errors %}
+      <span class="text-xs text-error">{{ form.name.errors|striptags }}</span>
+      {% endif %}
+    </label>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Costo
+        {{ form.cost }}
+        {% if form.cost.errors %}
+        <span class="text-xs text-error">{{ form.cost.errors|striptags }}</span>
+        {% endif %}
+      </label>
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Precio
+        {{ form.price }}
+        {% if form.price.errors %}
+        <span class="text-xs text-error">{{ form.price.errors|striptags }}</span>
+        {% endif %}
+      </label>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Stock
+        {{ form.stock }}
+        {% if form.stock.errors %}
+        <span class="text-xs text-error">{{ form.stock.errors|striptags }}</span>
+        {% endif %}
+      </label>
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Minimo
+        {{ form.min_stock }}
+        {% if form.min_stock.errors %}
+        <span class="text-xs text-error">{{ form.min_stock.errors|striptags }}</span>
+        {% endif %}
+      </label>
+    </div>
+    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+      Categoria
+      {{ form.category }}
+      {% if form.category.errors %}
+      <span class="text-xs text-error">{{ form.category.errors|striptags }}</span>
+      {% endif %}
+    </label>
+    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+      Marca
+      {{ form.brand }}
+      {% if form.brand.errors %}
+      <span class="text-xs text-error">{{ form.brand.errors|striptags }}</span>
+      {% endif %}
+    </label>
+    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+      {{ form.is_active }}
+      Activo
+    </label>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <button type="submit" class="btn btn-primary">
+      {{ submit_label }}
+    </button>
+  </div>
+</form>
+
+{% if product %}
+<form
+  class="mt-3"
+  method="post"
+  hx-post="{% url 'inventory:product_delete' product.id %}"
+  hx-target="#inventory-form-panel"
+  hx-swap="innerHTML"
+  hx-confirm="Eliminar este producto?"
+>
+  {% csrf_token %}
+  <input type="hidden" name="current_q" value="{{ current_q }}">
+  <input type="hidden" name="current_low" value="{{ current_low }}">
+  <button type="submit" class="btn btn-error btn-outline btn-sm">
+    Eliminar producto
+  </button>
+</form>
+{% endif %}

@@ -1,0 +1,93 @@
+<div class="mx-auto flex max-w-6xl flex-col gap-8">
+  <header class="flex flex-col gap-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-slate-500">
+      Dashboard
+    </div>
+    <h1 class="text-4xl font-semibold text-slate-900">
+      Panorama operativo
+    </h1>
+    <p class="max-w-2xl text-sm text-slate-600">
+      Indicadores clave de ventas y estado del inventario en tiempo real.
+    </p>
+  </header>
+
+  <section class="grid gap-4 lg:grid-cols-3">
+    <div class="panel rounded-3xl p-5">
+      <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Ventas hoy</div>
+      <div class="mt-3 text-3xl font-semibold text-slate-900">
+        {{ currency }} {{ totals_today.total_amount|default:0|floatformat:2 }}
+      </div>
+      <div class="mt-2 text-sm text-slate-500">
+        {{ totals_today.total_count|default:0 }} transacciones
+      </div>
+    </div>
+    <div class="panel rounded-3xl p-5">
+      <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Margen neto hoy</div>
+      <div class="mt-3 text-3xl font-semibold text-slate-900">
+        {{ currency }} {{ margin_today.margin|default:0|floatformat:2 }}
+      </div>
+      <div class="mt-2 text-sm text-slate-500">Precio - costo por item</div>
+    </div>
+    <div class="panel rounded-3xl p-5">
+      <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Valor del almacen</div>
+      <div class="mt-3 text-3xl font-semibold text-slate-900">
+        {{ currency }} {{ inventory_value.value|default:0|floatformat:2 }}
+      </div>
+      <div class="mt-2 text-sm text-slate-500">Stock * costo actual</div>
+    </div>
+  </section>
+
+  <section class="grid gap-6 lg:grid-cols-[2fr_1fr]">
+    <div class="panel rounded-3xl p-6">
+      <div class="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
+        <span>Productos estrella del mes</span>
+        <span>Top 5</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table w-full text-sm">
+          <thead class="text-xs uppercase tracking-[0.2em] text-slate-500">
+            <tr>
+              <th>Producto</th>
+              <th class="text-right">Cantidad</th>
+              <th class="text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in top_products %}
+            <tr>
+              <td class="font-semibold">{{ item.product_name }}</td>
+              <td class="text-right">{{ item.quantity }}</td>
+              <td class="text-right">{{ currency }} {{ item.total|default:0|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="py-6 text-center text-slate-500">
+                Aun no hay ventas este mes.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <aside class="panel rounded-3xl p-6">
+      <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Alertas</div>
+      <div class="mt-4 space-y-4">
+        <div class="rounded-2xl bg-slate-900 px-4 py-4 text-white">
+          <div class="text-xs uppercase tracking-[0.2em] text-slate-300">Bajo stock</div>
+          <div class="mt-2 text-2xl font-semibold">
+            {{ low_stock_count|default:0 }} productos
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-4">
+          <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Actualizacion</div>
+          <div class="mt-2 text-sm text-slate-600">
+            Calculado con ventas completadas del dia.
+          </div>
+        </div>
+      </div>
+    </aside>
+  </section>
+</div>

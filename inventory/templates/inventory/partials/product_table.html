@@ -1,0 +1,51 @@
+<div class="overflow-x-auto">
+  <table class="table w-full text-sm">
+    <thead class="text-xs uppercase tracking-[0.2em] text-slate-500">
+      <tr>
+        <th>Codigo</th>
+        <th>Producto</th>
+        <th>Stock</th>
+        <th>Minimo</th>
+        <th class="text-right">Precio</th>
+        <th class="text-right">Estado</th>
+        <th class="text-right">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td class="font-mono">{{ product.barcode }}</td>
+        <td class="font-semibold">{{ product.name }}</td>
+        <td>{{ product.stock }}</td>
+        <td>{{ product.min_stock }}</td>
+        <td class="text-right">{{ currency }} {{ product.price|floatformat:2 }}</td>
+        <td class="text-right">
+          {% if product.is_low_stock %}
+          <span class="badge badge-warning badge-outline">Bajo stock</span>
+          {% else %}
+          <span class="badge badge-success badge-outline">Ok</span>
+          {% endif %}
+        </td>
+        <td class="text-right">
+          <button
+            type="button"
+            class="btn btn-xs btn-ghost"
+            hx-get="{% url 'inventory:product_edit' product.id %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}"
+            hx-target="#inventory-form-panel"
+            hx-swap="innerHTML"
+            hx-indicator="#nav-spinner"
+          >
+            Editar
+          </button>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="py-6 text-center text-slate-500">
+          No hay productos con este filtro.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

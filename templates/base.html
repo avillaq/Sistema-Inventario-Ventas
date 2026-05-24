@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="es-PE" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    :root {
+      --ink: #1b1c1f;
+      --paper: #f7f2ea;
+      --accent: #ff6b35;
+      --accent-2: #2b59ff;
+      --mint: #1ad1a3;
+    }
+
+    body {
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #fff7e0 0%, transparent 55%),
+        radial-gradient(900px 700px at 110% 10%, #e7f0ff 0%, transparent 45%),
+        linear-gradient(180deg, #f7f2ea 0%, #f2efe9 100%);
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(20, 26, 36, 0.08);
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+    }
+
+    .grain {
+      background-image: radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.08) 1px, transparent 0);
+      background-size: 28px 28px;
+    }
+
+    .htmx-indicator {
+      opacity: 0;
+      transition: opacity 200ms ease;
+    }
+
+    .htmx-request .htmx-indicator {
+      opacity: 1;
+    }
+
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="absolute inset-0 pointer-events-none grain opacity-20"></div>
+  <div class="drawer min-h-screen lg:drawer-open">
+    <input id="dashboard-drawer" type="checkbox" class="drawer-toggle">
+    <div class="drawer-content flex min-h-screen flex-col">
+      <header class="sticky top-0 z-20 border-b border-slate-200/60 bg-white/70 backdrop-blur">
+        <div class="flex items-center justify-between px-6 py-4">
+          <div class="flex items-center gap-3">
+            <label for="dashboard-drawer" class="btn btn-ghost btn-sm lg:hidden">
+              Menu
+            </label>
+            <div>
+              <div class="text-xs uppercase tracking-[0.3em] text-slate-500">Dashboard</div>
+              <div class="text-lg font-semibold text-slate-900">Inventario y ventas</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-500">
+            <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold">Live</span>
+            <span id="nav-spinner" class="htmx-indicator">
+              <span class="loading loading-dots loading-sm"></span>
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <main id="dashboard-content" class="flex-1 px-6 py-8">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+
+    <div class="drawer-side">
+      <label for="dashboard-drawer" class="drawer-overlay"></label>
+      <aside class="min-h-screen w-72 border-r border-slate-200/60 bg-white/80 px-4 py-6 backdrop-blur">
+        <div class="px-2">
+          <div class="text-xs uppercase tracking-[0.3em] text-slate-400">Sistema</div>
+          <div class="mt-2 text-2xl font-semibold text-slate-900">POS Central</div>
+          <p class="mt-2 text-sm text-slate-500">
+            Inventario, caja y reportes en una sola vista.
+          </p>
+        </div>
+
+        <ul class="menu mt-6 w-full gap-1 rounded-2xl bg-white/70 p-3 text-sm">
+          <li>
+            <a
+              class="nav-link justify-between"
+              href="{% url 'dashboard' %}"
+              hx-get="{% url 'dashboard' %}"
+              hx-target="#dashboard-content"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              hx-indicator="#nav-spinner"
+            >
+              Dashboard
+              <span class="badge badge-primary badge-outline">KPIs</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link justify-between"
+              href="{% url 'sales:pos' %}"
+              hx-get="{% url 'sales:pos' %}"
+              hx-target="#dashboard-content"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              hx-indicator="#nav-spinner"
+            >
+              POS
+              <span class="badge badge-primary badge-outline">Caja</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link justify-between"
+              href="{% url 'inventory:overview' %}"
+              hx-get="{% url 'inventory:overview' %}"
+              hx-target="#dashboard-content"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              hx-indicator="#nav-spinner"
+            >
+              Inventario
+              <span class="badge badge-outline">Stock</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link justify-between"
+              href="{% url 'sales:customers' %}"
+              hx-get="{% url 'sales:customers' %}"
+              hx-target="#dashboard-content"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              hx-indicator="#nav-spinner"
+            >
+              Clientes
+              <span class="badge badge-outline">CRM</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link justify-between"
+              href="{% url 'sales:history' %}"
+              hx-get="{% url 'sales:history' %}"
+              hx-target="#dashboard-content"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              hx-indicator="#nav-spinner"
+            >
+              Reportes
+              <span class="badge badge-outline">Ventas</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="mt-6 rounded-2xl bg-slate-900 px-4 py-4 text-white">
+          <div class="text-xs uppercase tracking-[0.2em] text-slate-300">IGV</div>
+          <div class="mt-2 text-lg font-semibold">18%</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+  <script>
+    function setActiveNav() {
+      const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        try {
+          const linkPath = new URL(link.href).pathname.replace(/\/$/, "") || "/";
+          link.classList.toggle("active", linkPath === currentPath);
+        } catch (error) {
+          link.classList.remove("active");
+        }
+      });
+    }
+
+    function posCart(config) {
+      const safeConfig = config || {};
+      const decimals = Number(safeConfig.decimals);
+      const taxRate = Number(safeConfig.taxRate);
+
+      return {
+        currency: safeConfig.currency || "PEN",
+        decimals: Number.isFinite(decimals) ? decimals : 2,
+        taxRate: Number.isFinite(taxRate) ? taxRate : 0,
+        items: [],
+
+        addItem(data) {
+          const id = Number(data.id);
+          if (!id) {
+            return;
+          }
+
+          const existing = this.items.find((item) => item.id === id);
+          if (existing) {
+            existing.quantity += 1;
+            return;
+          }
+
+          this.items.push({
+            id,
+            name: data.name || "Item",
+            barcode: data.barcode || "",
+            unitPrice: Number(data.price || 0),
+            quantity: 1,
+          });
+        },
+
+        increment(id) {
+          const item = this.items.find((entry) => entry.id === id);
+          if (item) {
+            item.quantity += 1;
+          }
+        },
+
+        decrement(id) {
+          const item = this.items.find((entry) => entry.id === id);
+          if (!item) {
+            return;
+          }
+          if (item.quantity <= 1) {
+            this.remove(id);
+            return;
+          }
+          item.quantity -= 1;
+        },
+
+        normalizeQuantity(item) {
+          if (!item) {
+            return;
+          }
+          if (!item.quantity || item.quantity < 1) {
+            item.quantity = 1;
+          }
+        },
+
+        remove(id) {
+          this.items = this.items.filter((entry) => entry.id !== id);
+        },
+
+        subtotal() {
+          return this.items.reduce(
+            (sum, item) => sum + item.unitPrice * item.quantity,
+            0
+          );
+        },
+
+        taxAmount() {
+          return this.roundMoney(this.subtotal() * this.taxRate);
+        },
+
+        total() {
+          return this.roundMoney(this.subtotal() + this.taxAmount());
+        },
+
+        roundMoney(value) {
+          const factor = Math.pow(10, this.decimals);
+          return Math.round(value * factor) / factor;
+        },
+
+        formatMoney(value) {
+          return new Intl.NumberFormat("es-PE", {
+            style: "currency",
+            currency: this.currency,
+            minimumFractionDigits: this.decimals,
+            maximumFractionDigits: this.decimals,
+          }).format(this.roundMoney(value));
+        },
+
+        itemsPayload() {
+          return this.items.map((item) => ({
+            product_id: item.id,
+            quantity: item.quantity,
+          }));
+        },
+
+        serializedItems() {
+          return JSON.stringify(this.itemsPayload());
+        },
+
+        clearCart() {
+          this.items = [];
+        },
+      };
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setActiveNav();
+      if (window.htmx) {
+        htmx.config.selfRequestsOnly = true;
+        htmx.config.allowScriptTags = false;
+      }
+    });
+
+    document.addEventListener("htmx:afterSwap", (event) => {
+      if (window.Alpine) {
+        window.Alpine.initTree(event.target);
+      }
+      setActiveNav();
+    });
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
