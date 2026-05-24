@@ -1,68 +1,64 @@
-<div class="mx-auto flex max-w-6xl flex-col gap-8">
-  <header class="flex flex-col gap-3">
-    <div class="text-xs uppercase tracking-[0.3em] text-slate-500">
-      Clientes
+<div x-data="{ customerModalOpen: false }" class="flex flex-col gap-4">
+  <div class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="text-xl font-semibold text-neutral">Clientes</h1>
+      <p class="text-sm text-base-content/60">{{ customer_count|default:0 }} registros.</p>
     </div>
-    <h1 class="text-4xl font-semibold text-slate-900">
-      Gestion de clientes
-    </h1>
-    <p class="max-w-2xl text-sm text-slate-600">
-      Registra clientes para asociar ventas y consulta el historial rapido.
-    </p>
-  </header>
+    <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      @click="customerModalOpen = true"
+      hx-get="{% url 'sales:customer_create' %}?current_q={{ current_q|urlencode }}"
+      hx-target="#customer-modal-body"
+      hx-swap="innerHTML"
+      hx-indicator="#nav-spinner"
+    >
+      Nuevo cliente
+    </button>
+  </div>
 
-  <section class="panel rounded-3xl p-6">
+  <section class="panel p-3">
     <form
       method="get"
-      class="grid gap-4 lg:grid-cols-[2fr_auto_auto]"
+      class="grid gap-2 md:grid-cols-[1fr_auto]"
       hx-get="{% url 'sales:customers' %}"
       hx-target="#dashboard-content"
       hx-swap="innerHTML"
       hx-push-url="true"
       hx-indicator="#nav-spinner"
     >
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Buscar
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
         <input
           type="search"
           name="q"
           value="{{ filters.q }}"
-          placeholder="Nombre, documento o correo"
-          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
+          placeholder="Nombre, documento, correo o telefono"
+          class="input input-sm w-full"
         >
       </label>
-      <button type="submit" class="btn btn-primary btn-lg self-end">
+      <button type="submit" class="btn btn-neutral btn-sm self-end">
         Filtrar
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline btn-lg self-end"
-        hx-get="{% url 'sales:customer_create' %}?current_q={{ current_q|urlencode }}"
-        hx-target="#customer-form-panel"
-        hx-swap="innerHTML"
-        hx-indicator="#nav-spinner"
-      >
-        Nuevo cliente
       </button>
     </form>
   </section>
 
-  <section class="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-    <div class="panel rounded-3xl p-6">
-      <div class="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
-        <span>Clientes</span>
-        <span>{{ customer_count|default:0 }} registros</span>
-      </div>
-
-      <div id="customer-table">
-        {% include "sales/partials/customer_table.html" %}
-      </div>
+  <section class="panel overflow-hidden">
+    <div class="flex items-center justify-between border-b border-base-300 px-4 py-2">
+      <h2 class="text-sm font-semibold text-neutral">Directorio</h2>
+      <span class="badge badge-sm">{{ customer_count|default:0 }} clientes</span>
     </div>
+    <div id="customer-table">
+      {% include "sales/partials/customer_table.html" %}
+    </div>
+  </section>
 
-    <aside class="panel rounded-3xl p-6">
-      <div id="customer-form-panel">
+  <div class="modal modal-middle" :class="{ 'modal-open': customerModalOpen }">
+    <div class="modal-box max-w-xl p-0">
+      <div id="customer-modal-body">
         {% include "sales/partials/customer_form.html" with form=form form_title="Nuevo cliente" submit_label="Guardar" current_q=current_q %}
       </div>
-    </aside>
-  </section>
+    </div>
+    <button type="button" class="modal-backdrop" @click="customerModalOpen = false">Cerrar</button>
+  </div>
 </div>

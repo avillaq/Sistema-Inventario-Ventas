@@ -1,6 +1,6 @@
-<div class="overflow-x-auto">
-  <table class="table w-full text-sm">
-    <thead class="text-xs uppercase tracking-[0.2em] text-slate-500">
+<div class="max-h-[calc(100vh-220px)] overflow-x-auto">
+  <table class="table table-sm table-zebra table-pin-rows">
+    <thead>
       <tr>
         <th>Codigo</th>
         <th>Producto</th>
@@ -16,8 +16,8 @@
     <tbody>
       {% for product in products %}
       <tr>
-        <td class="font-mono">{{ product.barcode }}</td>
-        <td class="font-semibold">{{ product.name }}</td>
+        <td class="font-mono text-xs">{{ product.barcode }}</td>
+        <td class="font-medium">{{ product.name }}</td>
         <td>{{ product.category.name|default:"-" }}</td>
         <td>{{ product.brand.name|default:"-" }}</td>
         <td>{{ product.stock }}</td>
@@ -25,17 +25,18 @@
         <td class="text-right">{{ currency }} {{ product.price|floatformat:2 }}</td>
         <td class="text-right">
           {% if product.is_low_stock %}
-          <span class="badge badge-warning badge-outline">Bajo stock</span>
+          <span class="badge badge-warning badge-sm">Bajo stock</span>
           {% else %}
-          <span class="badge badge-success badge-outline">Ok</span>
+          <span class="badge badge-success badge-soft badge-sm">Ok</span>
           {% endif %}
         </td>
         <td class="text-right">
           <button
             type="button"
             class="btn btn-xs btn-ghost"
+            @click="productModalOpen = true"
             hx-get="{% url 'inventory:product_edit' product.id %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}"
-            hx-target="#inventory-form-panel"
+            hx-target="#inventory-modal-body"
             hx-swap="innerHTML"
             hx-indicator="#nav-spinner"
           >

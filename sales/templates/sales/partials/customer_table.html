@@ -1,6 +1,6 @@
-<div class="overflow-x-auto">
-  <table class="table w-full text-sm">
-    <thead class="text-xs uppercase tracking-[0.2em] text-slate-500">
+<div class="max-h-[calc(100vh-220px)] overflow-x-auto">
+  <table class="table table-sm table-zebra table-pin-rows">
+    <thead>
       <tr>
         <th>Cliente</th>
         <th>Documento</th>
@@ -12,25 +12,26 @@
     <tbody>
       {% for customer in customers %}
       <tr>
-        <td class="font-semibold">{{ customer.full_name }}</td>
+        <td class="font-medium">{{ customer.full_name }}</td>
         <td>{{ customer.document_id|default:"-" }}</td>
         <td>
           <div>{{ customer.email|default:"-" }}</div>
-          <div class="text-xs text-slate-500">{{ customer.phone|default:"-" }}</div>
+          <div class="text-xs text-base-content/60">{{ customer.phone|default:"-" }}</div>
         </td>
         <td class="text-right">
           {% if customer.is_active %}
-          <span class="badge badge-success badge-outline">Activo</span>
+          <span class="badge badge-success badge-soft badge-sm">Activo</span>
           {% else %}
-          <span class="badge badge-ghost">Inactivo</span>
+          <span class="badge badge-ghost badge-sm">Inactivo</span>
           {% endif %}
         </td>
         <td class="text-right">
           <button
             type="button"
             class="btn btn-xs btn-ghost"
+            @click="customerModalOpen = true"
             hx-get="{% url 'sales:customer_edit' customer.id %}?current_q={{ current_q|urlencode }}"
-            hx-target="#customer-form-panel"
+            hx-target="#customer-modal-body"
             hx-swap="innerHTML"
             hx-indicator="#nav-spinner"
           >

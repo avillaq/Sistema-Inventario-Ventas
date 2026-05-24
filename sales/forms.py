@@ -2,7 +2,7 @@ from django import forms
 
 from .models import Customer
 
-BASE_INPUT_CLASS = "rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
+BASE_INPUT_CLASS = "input input-sm w-full"
 
 
 class CustomerForm(forms.ModelForm):
@@ -20,5 +20,5 @@ class CustomerForm(forms.ModelForm):
             "document_id": forms.TextInput(attrs={"class": BASE_INPUT_CLASS}),
             "email": forms.EmailInput(attrs={"class": BASE_INPUT_CLASS}),
             "phone": forms.TextInput(attrs={"class": BASE_INPUT_CLASS}),
-            "is_active": forms.CheckboxInput(attrs={"class": "checkbox checkbox-sm"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "checkbox checkbox-sm checkbox-primary"}),
         }

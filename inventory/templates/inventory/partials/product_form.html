@@ -1,136 +1,137 @@
-<div class="flex items-center justify-between">
-  <div class="text-xs uppercase tracking-[0.2em] text-slate-500">
-    {{ form_title }}
+<div class="border-b border-base-300 px-4 py-3">
+  <div class="flex items-center justify-between gap-3">
+    <div>
+      <h2 class="text-base font-semibold text-neutral">{{ form_title }}</h2>
+      <p class="text-xs text-base-content/60">Datos comerciales y control de stock.</p>
+    </div>
+    {% if product %}
+    <button
+      type="button"
+      class="btn btn-ghost btn-xs"
+      hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}"
+      hx-target="#inventory-modal-body"
+      hx-swap="innerHTML"
+      hx-indicator="#nav-spinner"
+    >
+      Nuevo
+    </button>
+    {% endif %}
   </div>
-  {% if product %}
-  <button
-    type="button"
-    class="btn btn-ghost btn-xs"
-    hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}"
-    hx-target="#inventory-form-panel"
-    hx-swap="innerHTML"
-    hx-indicator="#nav-spinner"
-  >
-    Nuevo
-  </button>
+</div>
+
+<div class="p-4">
+  {% if success_message %}
+  <div role="alert" class="alert alert-success alert-soft mb-3 py-2">
+    <div class="text-sm">{{ success_message }}</div>
+  </div>
   {% endif %}
-</div>
 
-{% if success_message %}
-<div role="alert" class="alert alert-success mt-4">
-  <div class="text-sm">{{ success_message }}</div>
-</div>
-{% endif %}
+  {% if form.non_field_errors %}
+  <div role="alert" class="alert alert-error alert-soft mb-3 py-2">
+    <div class="text-sm">{{ form.non_field_errors|striptags }}</div>
+  </div>
+  {% endif %}
 
-{% if form.non_field_errors %}
-<div role="alert" class="alert alert-error mt-4">
-  <div class="text-sm">{{ form.non_field_errors|striptags }}</div>
-</div>
-{% endif %}
+  <form
+    class="grid gap-3"
+    method="post"
+    hx-post="{% if product %}{% url 'inventory:product_edit' product.id %}{% else %}{% url 'inventory:product_create' %}{% endif %}"
+    hx-target="#inventory-modal-body"
+    hx-swap="innerHTML"
+  >
+    {% csrf_token %}
+    <input type="hidden" name="current_q" value="{{ current_q }}">
+    <input type="hidden" name="current_low" value="{{ current_low }}">
+    <input type="hidden" name="current_category" value="{{ current_category }}">
+    <input type="hidden" name="current_brand" value="{{ current_brand }}">
 
-<form
-  class="mt-4 space-y-4"
-  method="post"
-  hx-post="{% if product %}{% url 'inventory:product_edit' product.id %}{% else %}{% url 'inventory:product_create' %}{% endif %}"
-  hx-target="#inventory-form-panel"
-  hx-swap="innerHTML"
->
-  {% csrf_token %}
-  <input type="hidden" name="current_q" value="{{ current_q }}">
-  <input type="hidden" name="current_low" value="{{ current_low }}">
-  <input type="hidden" name="current_category" value="{{ current_category }}">
-  <input type="hidden" name="current_brand" value="{{ current_brand }}">
-
-  <div class="grid gap-3">
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Codigo
-      {{ form.barcode }}
-      {% if form.barcode.errors %}
-      <span class="text-xs text-error">{{ form.barcode.errors|striptags }}</span>
-      {% endif %}
-    </label>
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Nombre
-      {{ form.name }}
-      {% if form.name.errors %}
-      <span class="text-xs text-error">{{ form.name.errors|striptags }}</span>
-      {% endif %}
-    </label>
     <div class="grid gap-3 sm:grid-cols-2">
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Costo
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Codigo</span></div>
+        {{ form.barcode }}
+        {% if form.barcode.errors %}<span class="mt-1 text-xs text-error">{{ form.barcode.errors|striptags }}</span>{% endif %}
+      </label>
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Nombre</span></div>
+        {{ form.name }}
+        {% if form.name.errors %}<span class="mt-1 text-xs text-error">{{ form.name.errors|striptags }}</span>{% endif %}
+      </label>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-4">
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Costo</span></div>
         {{ form.cost }}
-        {% if form.cost.errors %}
-        <span class="text-xs text-error">{{ form.cost.errors|striptags }}</span>
-        {% endif %}
+        {% if form.cost.errors %}<span class="mt-1 text-xs text-error">{{ form.cost.errors|striptags }}</span>{% endif %}
       </label>
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Precio
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Precio</span></div>
         {{ form.price }}
-        {% if form.price.errors %}
-        <span class="text-xs text-error">{{ form.price.errors|striptags }}</span>
-        {% endif %}
+        {% if form.price.errors %}<span class="mt-1 text-xs text-error">{{ form.price.errors|striptags }}</span>{% endif %}
       </label>
-    </div>
-    <div class="grid gap-3 sm:grid-cols-2">
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Stock
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Stock</span></div>
         {{ form.stock }}
-        {% if form.stock.errors %}
-        <span class="text-xs text-error">{{ form.stock.errors|striptags }}</span>
-        {% endif %}
+        {% if form.stock.errors %}<span class="mt-1 text-xs text-error">{{ form.stock.errors|striptags }}</span>{% endif %}
       </label>
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Minimo
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Minimo</span></div>
         {{ form.min_stock }}
-        {% if form.min_stock.errors %}
-        <span class="text-xs text-error">{{ form.min_stock.errors|striptags }}</span>
-        {% endif %}
+        {% if form.min_stock.errors %}<span class="mt-1 text-xs text-error">{{ form.min_stock.errors|striptags }}</span>{% endif %}
       </label>
     </div>
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Categoria
-      {{ form.category }}
-      {% if form.category.errors %}
-      <span class="text-xs text-error">{{ form.category.errors|striptags }}</span>
-      {% endif %}
-    </label>
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Marca
-      {{ form.brand }}
-      {% if form.brand.errors %}
-      <span class="text-xs text-error">{{ form.brand.errors|striptags }}</span>
-      {% endif %}
-    </label>
-    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Categoria</span></div>
+        {{ form.category }}
+        {% if form.category.errors %}<span class="mt-1 text-xs text-error">{{ form.category.errors|striptags }}</span>{% endif %}
+      </label>
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Marca</span></div>
+        {{ form.brand }}
+        {% if form.brand.errors %}<span class="mt-1 text-xs text-error">{{ form.brand.errors|striptags }}</span>{% endif %}
+      </label>
+    </div>
+
+    <label class="flex items-center gap-2 text-sm">
       {{ form.is_active }}
       Activo
     </label>
-  </div>
 
-  <div class="flex flex-wrap items-center gap-3">
-    <button type="submit" class="btn btn-primary">
-      {{ submit_label }}
-    </button>
-  </div>
-</form>
+    <div class="modal-action mt-1">
+      {% if product %}
+      <button
+        type="submit"
+        form="delete-product-form"
+        class="btn btn-error btn-outline btn-sm mr-auto"
+      >
+        Eliminar
+      </button>
+      {% endif %}
+      <button type="button" class="btn btn-ghost btn-sm" @click="productModalOpen = false">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primary btn-sm">
+        {{ submit_label }}
+      </button>
+    </div>
+  </form>
 
-{% if product %}
-<form
-  class="mt-3"
-  method="post"
-  hx-post="{% url 'inventory:product_delete' product.id %}"
-  hx-target="#inventory-form-panel"
-  hx-swap="innerHTML"
-  hx-confirm="Eliminar este producto?"
->
-  {% csrf_token %}
-  <input type="hidden" name="current_q" value="{{ current_q }}">
-  <input type="hidden" name="current_low" value="{{ current_low }}">
-  <input type="hidden" name="current_category" value="{{ current_category }}">
-  <input type="hidden" name="current_brand" value="{{ current_brand }}">
-  <button type="submit" class="btn btn-error btn-outline btn-sm">
-    Eliminar producto
-  </button>
-</form>
-{% endif %}
+  {% if product %}
+  <form
+    id="delete-product-form"
+    method="post"
+    hx-post="{% url 'inventory:product_delete' product.id %}"
+    hx-target="#inventory-modal-body"
+    hx-swap="innerHTML"
+    hx-confirm="Eliminar este producto?"
+  >
+    {% csrf_token %}
+    <input type="hidden" name="current_q" value="{{ current_q }}">
+    <input type="hidden" name="current_low" value="{{ current_low }}">
+    <input type="hidden" name="current_category" value="{{ current_category }}">
+    <input type="hidden" name="current_brand" value="{{ current_brand }}">
+  </form>
+  {% endif %}
+</div>

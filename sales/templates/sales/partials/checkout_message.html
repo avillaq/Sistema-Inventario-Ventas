@@ -1,12 +1,12 @@
 {% if status == "success" %}
-<div role="alert" class="alert alert-success">
+<div role="alert" class="alert alert-success alert-soft py-2">
   <div>
     <div class="font-semibold">Venta exitosa</div>
     <div class="text-sm">Ticket #{{ sale.id }}</div>
   </div>
 </div>
 {% else %}
-<div role="alert" class="alert alert-error">
+<div role="alert" class="alert alert-error alert-soft py-2">
   <div>
     <div class="font-semibold">No se pudo cobrar</div>
     <div class="text-sm">{{ message }}</div>

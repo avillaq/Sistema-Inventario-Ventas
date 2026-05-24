@@ -1,121 +1,90 @@
-<div class="mx-auto flex max-w-6xl flex-col gap-8">
-  <header class="flex flex-col gap-3">
-    <div class="text-xs uppercase tracking-[0.3em] text-slate-500">
-      Reportes / Ventas
+<div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-xl font-semibold text-neutral">Ventas</h1>
+      <p class="text-sm text-base-content/60">Historial por ticket.</p>
     </div>
-    <h1 class="text-4xl font-semibold text-slate-900">
-      Historial de ventas
-    </h1>
-    <p class="max-w-2xl text-sm text-slate-600">
-      Filtra por ticket o rango de fechas para revisar transacciones.
-    </p>
-  </header>
+  </div>
 
-  <section class="panel rounded-3xl p-6">
+  <section class="stats stats-vertical border border-base-300 bg-base-100 shadow-none sm:stats-horizontal">
+    <div class="stat py-3">
+      <div class="stat-title text-xs">Total filtrado</div>
+      <div class="stat-value text-2xl text-neutral">{{ currency }} {{ totals.total_amount|default:0|floatformat:2 }}</div>
+    </div>
+    <div class="stat py-3">
+      <div class="stat-title text-xs">Tickets</div>
+      <div class="stat-value text-2xl text-neutral">{{ totals.total_count|default:0 }}</div>
+    </div>
+  </section>
+
+  <section class="panel p-3">
     <form
       method="get"
-      class="grid gap-4 lg:grid-cols-[1.1fr_1fr_1fr_auto]"
+      class="grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto]"
       hx-get="{% url 'sales:history' %}"
       hx-target="#dashboard-content"
       hx-swap="innerHTML"
       hx-push-url="true"
       hx-indicator="#nav-spinner"
     >
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Ticket
-        <input
-          type="text"
-          name="ticket"
-          value="{{ filters.ticket }}"
-          placeholder="#123"
-          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
-        >
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Ticket</span></div>
+        <input type="text" name="ticket" value="{{ filters.ticket }}" placeholder="#123" class="input input-sm w-full">
       </label>
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Desde
-        <input
-          type="date"
-          name="from"
-          value="{{ filters.from }}"
-          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
-        >
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Desde</span></div>
+        <input type="date" name="from" value="{{ filters.from }}" class="input input-sm w-full">
       </label>
-      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-        Hasta
-        <input
-          type="date"
-          name="to"
-          value="{{ filters.to }}"
-          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
-        >
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Hasta</span></div>
+        <input type="date" name="to" value="{{ filters.to }}" class="input input-sm w-full">
       </label>
-      <button type="submit" class="btn btn-primary btn-lg self-end">
+      <button type="submit" class="btn btn-neutral btn-sm self-end">
         Filtrar
       </button>
     </form>
   </section>
 
-  <section class="grid gap-6 lg:grid-cols-[2fr_1fr]">
-    <div class="panel rounded-3xl p-6">
-      <div class="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
-        <span>Ventas recientes</span>
-        <span>{{ totals.total_count|default:0 }} registros</span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="table w-full text-sm">
-          <thead class="text-xs uppercase tracking-[0.2em] text-slate-500">
-            <tr>
-              <th>Ticket</th>
-              <th>Fecha</th>
-              <th>Cajero</th>
-              <th>Items</th>
-              <th class="text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for sale in sales %}
-            <tr>
-              <td class="font-semibold">#{{ sale.id }}</td>
-              <td>{{ sale.created_at|date:"Y-m-d H:i" }}</td>
-              <td>
-                {% if sale.cashier %}
-                  {{ sale.cashier.get_full_name|default:sale.cashier.username }}
-                {% else %}
-                  Sistema
-                {% endif %}
-              </td>
-              <td>{{ sale.items_count }}</td>
-              <td class="text-right font-semibold">{{ currency }} {{ sale.total|floatformat:2 }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="5" class="py-6 text-center text-slate-500">
-                No hay ventas con estos filtros.
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+  <section class="panel overflow-hidden">
+    <div class="flex items-center justify-between border-b border-base-300 px-4 py-2">
+      <h2 class="text-sm font-semibold text-neutral">Ventas recientes</h2>
+      <span class="badge badge-sm">{{ totals.total_count|default:0 }} registros</span>
     </div>
-
-    <aside class="panel rounded-3xl p-6">
-      <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Resumen</div>
-      <div class="mt-4 space-y-4">
-        <div class="rounded-2xl bg-slate-900 px-4 py-4 text-white">
-          <div class="text-xs uppercase tracking-[0.2em] text-slate-300">Total vendido</div>
-          <div class="mt-2 text-2xl font-semibold">
-            {{ currency }} {{ totals.total_amount|default:0|floatformat:2 }}
-          </div>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-4">
-          <div class="text-xs uppercase tracking-[0.2em] text-slate-500">Tickets</div>
-          <div class="mt-2 text-2xl font-semibold text-slate-900">
-            {{ totals.total_count|default:0 }}
-          </div>
-        </div>
-      </div>
-    </aside>
+    <div class="max-h-[calc(100vh-300px)] overflow-x-auto">
+      <table class="table table-sm table-zebra table-pin-rows">
+        <thead>
+          <tr>
+            <th>Ticket</th>
+            <th>Fecha</th>
+            <th>Cajero</th>
+            <th>Items</th>
+            <th class="text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sale in sales %}
+          <tr>
+            <td class="font-medium">#{{ sale.id }}</td>
+            <td>{{ sale.created_at|date:"Y-m-d H:i" }}</td>
+            <td>
+              {% if sale.cashier %}
+                {{ sale.cashier.get_full_name|default:sale.cashier.username }}
+              {% else %}
+                Sistema
+              {% endif %}
+            </td>
+            <td>{{ sale.items_count }}</td>
+            <td class="text-right font-medium">{{ currency }} {{ sale.total|floatformat:2 }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="py-6 text-center text-base-content/60">
+              No hay ventas con estos filtros.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </section>
 </div>

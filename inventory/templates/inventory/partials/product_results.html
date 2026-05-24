@@ -1,52 +1,60 @@
 {% load l10n %}
 {% if products %}
-<div class="grid gap-4 sm:grid-cols-2">
-  {% for product in products %}
-  <div class="rounded-2xl border border-slate-200 bg-white/85 p-4">
-    <div class="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
-      <span>Producto</span>
-      {% if product.is_low_stock %}
-      <span class="badge badge-warning badge-outline">Bajo stock</span>
-      {% endif %}
-    </div>
-    <h3 class="mt-3 text-lg font-semibold text-slate-900">{{ product.name }}</h3>
-    <div class="mt-2 flex items-center gap-2 text-xs text-slate-500">
-      <span class="rounded-full bg-slate-100 px-2 py-1 font-mono">#{{ product.barcode }}</span>
-      <span class="rounded-full bg-slate-100 px-2 py-1">Stock {{ product.stock }}</span>
-      {% if product.category %}
-      <span class="rounded-full bg-slate-100 px-2 py-1">{{ product.category.name }}</span>
-      {% endif %}
-      {% if product.brand %}
-      <span class="rounded-full bg-slate-100 px-2 py-1">{{ product.brand.name }}</span>
-      {% endif %}
-    </div>
-    <div class="mt-4 flex items-center justify-between">
-      <div class="text-lg font-semibold text-slate-900">
-        {{ currency }} {{ product.price|floatformat:2 }}
-      </div>
-      {% if product.stock > 0 %}
-      <button
-        type="button"
-        class="btn btn-sm btn-primary"
-        data-id="{{ product.id }}"
-        data-name="{{ product.name }}"
-        data-barcode="{{ product.barcode }}"
-        data-price="{{ product.price|unlocalize }}"
-        @click="addItem($el.dataset)"
-      >
-        Agregar
-      </button>
-      {% else %}
-      <button type="button" class="btn btn-sm btn-disabled" disabled aria-disabled="true">
-        Sin stock
-      </button>
-      {% endif %}
-    </div>
-  </div>
-  {% endfor %}
+<div class="max-h-[calc(100vh-260px)] overflow-x-auto">
+  <table class="table table-sm table-zebra table-pin-rows">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Codigo</th>
+        <th>Stock</th>
+        <th class="text-right">Precio</th>
+        <th class="text-right">Accion</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>
+          <div class="font-medium">{{ product.name }}</div>
+          <div class="text-xs text-base-content/60">
+            {{ product.category.name|default:"Sin categoria" }} · {{ product.brand.name|default:"Sin marca" }}
+          </div>
+        </td>
+        <td class="font-mono text-xs">{{ product.barcode }}</td>
+        <td>
+          {% if product.is_low_stock %}
+          <span class="badge badge-warning badge-sm">{{ product.stock }}</span>
+          {% else %}
+          {{ product.stock }}
+          {% endif %}
+        </td>
+        <td class="text-right font-medium">{{ currency }} {{ product.price|floatformat:2 }}</td>
+        <td class="text-right">
+          {% if product.stock > 0 %}
+          <button
+            type="button"
+            class="btn btn-primary btn-xs"
+            data-id="{{ product.id }}"
+            data-name="{{ product.name }}"
+            data-barcode="{{ product.barcode }}"
+            data-price="{{ product.price|unlocalize }}"
+            @click="addItem($el.dataset)"
+          >
+            Agregar
+          </button>
+          {% else %}
+          <button type="button" class="btn btn-xs btn-disabled" disabled aria-disabled="true">
+            Sin stock
+          </button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% else %}
-<div class="rounded-2xl border border-dashed border-slate-200 bg-white/70 px-6 py-8 text-center text-sm text-slate-500">
+<div class="border border-dashed border-base-300 bg-base-100 px-4 py-8 text-center text-sm text-base-content/60">
   No hay resultados.
 </div>
 {% endif %}

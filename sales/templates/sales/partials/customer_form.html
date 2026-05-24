@@ -1,98 +1,107 @@
-<div class="flex items-center justify-between">
-  <div class="text-xs uppercase tracking-[0.2em] text-slate-500">
-    {{ form_title }}
+<div class="border-b border-base-300 px-4 py-3">
+  <div class="flex items-center justify-between gap-3">
+    <div>
+      <h2 class="text-base font-semibold text-neutral">{{ form_title }}</h2>
+      <p class="text-xs text-base-content/60">Datos de contacto para ventas asociadas.</p>
+    </div>
+    {% if customer %}
+    <button
+      type="button"
+      class="btn btn-ghost btn-xs"
+      hx-get="{% url 'sales:customer_create' %}?current_q={{ current_q|urlencode }}"
+      hx-target="#customer-modal-body"
+      hx-swap="innerHTML"
+      hx-indicator="#nav-spinner"
+    >
+      Nuevo
+    </button>
+    {% endif %}
   </div>
-  {% if customer %}
-  <button
-    type="button"
-    class="btn btn-ghost btn-xs"
-    hx-get="{% url 'sales:customer_create' %}?current_q={{ current_q|urlencode }}"
-    hx-target="#customer-form-panel"
-    hx-swap="innerHTML"
-    hx-indicator="#nav-spinner"
-  >
-    Nuevo
-  </button>
+</div>
+
+<div class="p-4">
+  {% if success_message %}
+  <div role="alert" class="alert alert-success alert-soft mb-3 py-2">
+    <div class="text-sm">{{ success_message }}</div>
+  </div>
   {% endif %}
-</div>
 
-{% if success_message %}
-<div role="alert" class="alert alert-success mt-4">
-  <div class="text-sm">{{ success_message }}</div>
-</div>
-{% endif %}
+  {% if form.non_field_errors %}
+  <div role="alert" class="alert alert-error alert-soft mb-3 py-2">
+    <div class="text-sm">{{ form.non_field_errors|striptags }}</div>
+  </div>
+  {% endif %}
 
-{% if form.non_field_errors %}
-<div role="alert" class="alert alert-error mt-4">
-  <div class="text-sm">{{ form.non_field_errors|striptags }}</div>
-</div>
-{% endif %}
+  <form
+    class="grid gap-3"
+    method="post"
+    hx-post="{% if customer %}{% url 'sales:customer_edit' customer.id %}{% else %}{% url 'sales:customer_create' %}{% endif %}"
+    hx-target="#customer-modal-body"
+    hx-swap="innerHTML"
+  >
+    {% csrf_token %}
+    <input type="hidden" name="current_q" value="{{ current_q }}">
 
-<form
-  class="mt-4 space-y-4"
-  method="post"
-  hx-post="{% if customer %}{% url 'sales:customer_edit' customer.id %}{% else %}{% url 'sales:customer_create' %}{% endif %}"
-  hx-target="#customer-form-panel"
-  hx-swap="innerHTML"
->
-  {% csrf_token %}
-  <input type="hidden" name="current_q" value="{{ current_q }}">
-
-  <div class="grid gap-3">
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Nombre completo
+    <label class="form-control">
+      <div class="label py-1"><span class="label-text text-xs">Nombre completo</span></div>
       {{ form.full_name }}
-      {% if form.full_name.errors %}
-      <span class="text-xs text-error">{{ form.full_name.errors|striptags }}</span>
-      {% endif %}
+      {% if form.full_name.errors %}<span class="mt-1 text-xs text-error">{{ form.full_name.errors|striptags }}</span>{% endif %}
     </label>
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Documento
-      {{ form.document_id }}
-      {% if form.document_id.errors %}
-      <span class="text-xs text-error">{{ form.document_id.errors|striptags }}</span>
-      {% endif %}
-    </label>
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Correo
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Documento</span></div>
+        {{ form.document_id }}
+        {% if form.document_id.errors %}<span class="mt-1 text-xs text-error">{{ form.document_id.errors|striptags }}</span>{% endif %}
+      </label>
+      <label class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Telefono</span></div>
+        {{ form.phone }}
+        {% if form.phone.errors %}<span class="mt-1 text-xs text-error">{{ form.phone.errors|striptags }}</span>{% endif %}
+      </label>
+    </div>
+
+    <label class="form-control">
+      <div class="label py-1"><span class="label-text text-xs">Correo</span></div>
       {{ form.email }}
-      {% if form.email.errors %}
-      <span class="text-xs text-error">{{ form.email.errors|striptags }}</span>
-      {% endif %}
+      {% if form.email.errors %}<span class="mt-1 text-xs text-error">{{ form.email.errors|striptags }}</span>{% endif %}
     </label>
-    <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-      Telefono
-      {{ form.phone }}
-      {% if form.phone.errors %}
-      <span class="text-xs text-error">{{ form.phone.errors|striptags }}</span>
-      {% endif %}
-    </label>
-    <label class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+
+    <label class="flex items-center gap-2 text-sm">
       {{ form.is_active }}
       Activo
     </label>
-  </div>
 
-  <div class="flex flex-wrap items-center gap-3">
-    <button type="submit" class="btn btn-primary">
-      {{ submit_label }}
-    </button>
-  </div>
-</form>
+    <div class="modal-action mt-1">
+      {% if customer %}
+      <button
+        type="submit"
+        form="delete-customer-form"
+        class="btn btn-error btn-outline btn-sm mr-auto"
+      >
+        Eliminar
+      </button>
+      {% endif %}
+      <button type="button" class="btn btn-ghost btn-sm" @click="customerModalOpen = false">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primary btn-sm">
+        {{ submit_label }}
+      </button>
+    </div>
+  </form>
 
-{% if customer %}
-<form
-  class="mt-3"
-  method="post"
-  hx-post="{% url 'sales:customer_delete' customer.id %}"
-  hx-target="#customer-form-panel"
-  hx-swap="innerHTML"
-  hx-confirm="Eliminar este cliente?"
->
-  {% csrf_token %}
-  <input type="hidden" name="current_q" value="{{ current_q }}">
-  <button type="submit" class="btn btn-error btn-outline btn-sm">
-    Eliminar cliente
-  </button>
-</form>
-{% endif %}
+  {% if customer %}
+  <form
+    id="delete-customer-form"
+    method="post"
+    hx-post="{% url 'sales:customer_delete' customer.id %}"
+    hx-target="#customer-modal-body"
+    hx-swap="innerHTML"
+    hx-confirm="Eliminar este cliente?"
+  >
+    {% csrf_token %}
+    <input type="hidden" name="current_q" value="{{ current_q }}">
+  </form>
+  {% endif %}
+</div>

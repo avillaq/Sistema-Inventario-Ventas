@@ -2,8 +2,8 @@ from django import forms
 
 from .models import Brand, Category, Product
 
-BASE_INPUT_CLASS = "rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
-BASE_SELECT_CLASS = "rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800"
+BASE_INPUT_CLASS = "input input-sm w-full"
+BASE_SELECT_CLASS = "select select-sm w-full"
 
 
 class ProductForm(forms.ModelForm):
@@ -38,5 +38,5 @@ class ProductForm(forms.ModelForm):
             ),
             "category": forms.Select(attrs={"class": BASE_SELECT_CLASS}),
             "brand": forms.Select(attrs={"class": BASE_SELECT_CLASS}),
-            "is_active": forms.CheckboxInput(attrs={"class": "checkbox checkbox-sm"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "checkbox checkbox-sm checkbox-primary"}),
         }
