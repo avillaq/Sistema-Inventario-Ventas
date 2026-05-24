@@ -18,23 +18,35 @@
   <section class="grid min-h-[calc(100vh-130px)] gap-4 xl:grid-cols-[1fr_420px]">
     <div class="panel overflow-hidden">
       <div class="border-b border-base-300 p-3">
-        <label class="input input-sm flex w-full items-center gap-2">
-          <span class="text-base-content/50">⌕</span>
-          <input
-            id="product-search"
-            type="search"
-            name="q"
-            placeholder="Buscar por codigo, nombre, categoria o marca"
-            class="grow"
-            hx-get="{% url 'inventory:product_search' %}"
-            hx-trigger="input changed delay:250ms, search"
-            hx-target="#product-results"
-            hx-indicator="#search-spinner"
-          >
-          <span id="search-spinner" class="htmx-indicator">
-            <span class="loading loading-spinner loading-xs"></span>
-          </span>
-        </label>
+        <form
+          id="product-search-form"
+          class="grid gap-2 sm:grid-cols-[1fr_auto_auto]"
+          method="get"
+          hx-get="{% url 'inventory:product_search' %}"
+          hx-target="#product-results"
+          hx-swap="innerHTML"
+          hx-indicator="#search-spinner"
+        >
+          <div class="form-control">
+            <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
+            <label class="input input-sm flex w-full items-center gap-2">
+              <span class="text-base-content/50">⌕</span>
+              <input
+                id="product-search"
+                type="search"
+                name="q"
+                placeholder="Buscar por codigo, nombre, categoria o marca"
+                class="grow"
+              >
+              <span id="search-spinner" class="htmx-indicator">
+                <span class="loading loading-spinner loading-xs"></span>
+              </span>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-neutral btn-sm self-end">
+            Buscar
+          </button>
+        </form>
       </div>
       <div id="product-results">
         {% include "inventory/partials/product_results.html" with products=products currency=currency %}
@@ -90,7 +102,7 @@
                 </td>
                 <td class="text-right font-medium" x-text="formatMoney(item.unitPrice * item.quantity)"></td>
                 <td class="text-right">
-                  <button type="button" class="btn btn-ghost btn-xs" @click="remove(item.id)">×</button>
+                  <button type="button" class="btn btn-ghost btn-xs" @click="remove(item.id)">x</button>
                 </td>
               </tr>
             </template>

@@ -20,7 +20,12 @@
   <section class="panel p-3">
     <form
       method="get"
-      class="grid gap-2 md:grid-cols-[1fr_auto]"
+      class="grid gap-2 md:grid-cols-[1fr_auto_auto]"
+      hx-get="{% url 'sales:customers' %}"
+      hx-target="#dashboard-content"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      hx-indicator="#customer-search-spinner"
     >
       <div class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
@@ -33,19 +38,15 @@
             value="{{ filters.q }}"
             placeholder="Nombre, DNI, correo o telefono"
             class="grow"
-            hx-get="{% url 'sales:customers' %}"
-            hx-trigger="input delay:250ms, search"
-            hx-include="closest form"
-            hx-target="#dashboard-content"
-            hx-swap="innerHTML"
-            hx-push-url="true"
-            hx-indicator="#customer-search-spinner"
           >
           <span id="customer-search-spinner" class="htmx-indicator">
             <span class="loading loading-spinner loading-xs"></span>
           </span>
         </label>
       </div>
+      <button type="submit" class="btn btn-neutral btn-sm self-end">
+        Buscar
+      </button>
       <a
         href="{% url 'sales:customers' %}"
         class="btn btn-ghost btn-sm self-end"

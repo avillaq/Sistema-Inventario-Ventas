@@ -20,7 +20,12 @@
   <section class="panel p-3">
     <form
       method="get"
-      class="grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto]"
+      class="grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto_auto]"
+      hx-get="{% url 'sales:history' %}"
+      hx-target="#dashboard-content"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      hx-indicator="#history-search-spinner"
     >
       <div class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
@@ -33,13 +38,6 @@
             value="{{ filters.ticket }}"
             placeholder="Ticket #123"
             class="grow"
-            hx-get="{% url 'sales:history' %}"
-            hx-trigger="input delay:250ms, search"
-            hx-include="closest form"
-            hx-target="#dashboard-content"
-            hx-swap="innerHTML"
-            hx-push-url="true"
-            hx-indicator="#history-search-spinner"
           >
           <span id="history-search-spinner" class="htmx-indicator">
             <span class="loading loading-spinner loading-xs"></span>
@@ -53,13 +51,6 @@
           name="from"
           value="{{ filters.from }}"
           class="input input-sm w-full"
-          hx-get="{% url 'sales:history' %}"
-          hx-trigger="change"
-          hx-include="closest form"
-          hx-target="#dashboard-content"
-          hx-swap="innerHTML"
-          hx-push-url="true"
-          hx-indicator="#history-search-spinner"
         >
       </label>
       <label class="form-control">
@@ -69,15 +60,11 @@
           name="to"
           value="{{ filters.to }}"
           class="input input-sm w-full"
-          hx-get="{% url 'sales:history' %}"
-          hx-trigger="change"
-          hx-include="closest form"
-          hx-target="#dashboard-content"
-          hx-swap="innerHTML"
-          hx-push-url="true"
-          hx-indicator="#history-search-spinner"
         >
       </label>
+      <button type="submit" class="btn btn-neutral btn-sm self-end">
+        Buscar
+      </button>
       <a
         href="{% url 'sales:history' %}"
         class="btn btn-ghost btn-sm self-end"

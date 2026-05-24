@@ -341,12 +341,11 @@
         },
 
         refreshProducts() {
-          const search = document.getElementById("product-search");
-          if (search && window.htmx) {
-            const url = new URL(search.getAttribute("hx-get"), window.location.origin);
-            if (search.value) {
-              url.searchParams.set(search.name || "q", search.value);
-            }
+          const form = document.getElementById("product-search-form");
+          if (form && window.htmx) {
+            const url = new URL(form.getAttribute("hx-get"), window.location.origin);
+            const params = new URLSearchParams(new FormData(form));
+            url.search = params.toString();
             htmx.ajax("GET", url.pathname + url.search, {
               target: "#product-results",
               swap: "innerHTML",

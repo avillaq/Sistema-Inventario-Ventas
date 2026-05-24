@@ -20,7 +20,12 @@
   <section class="panel p-3">
     <form
       method="get"
-      class="grid gap-2 md:grid-cols-2 xl:grid-cols-[1.4fr_1fr_1fr_1fr_auto_auto]"
+      class="grid gap-2 md:grid-cols-2 xl:grid-cols-[1.4fr_0.5fr_0.5fr_0.5fr_auto_auto_auto]"
+      hx-get="{% url 'inventory:overview' %}"
+      hx-target="#dashboard-content"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      hx-indicator="#inventory-search-spinner"
     >
       <div class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
@@ -33,13 +38,6 @@
             value="{{ filters.q }}"
             placeholder="Nombre o codigo"
             class="grow"
-            hx-get="{% url 'inventory:overview' %}"
-            hx-trigger="input delay:250ms, search"
-            hx-include="closest form"
-            hx-target="#dashboard-content"
-            hx-swap="innerHTML"
-            hx-push-url="true"
-            hx-indicator="#inventory-search-spinner"
           >
           <span id="inventory-search-spinner" class="htmx-indicator">
             <span class="loading loading-spinner loading-xs"></span>
@@ -51,13 +49,6 @@
         <select
           name="category"
           class="select select-sm w-full"
-          hx-get="{% url 'inventory:overview' %}"
-          hx-trigger="change"
-          hx-include="closest form"
-          hx-target="#dashboard-content"
-          hx-swap="innerHTML"
-          hx-push-url="true"
-          hx-indicator="#inventory-search-spinner"
         >
           <option value="">Todas</option>
           {% for category in categories %}
@@ -72,13 +63,6 @@
         <select
           name="brand"
           class="select select-sm w-full"
-          hx-get="{% url 'inventory:overview' %}"
-          hx-trigger="change"
-          hx-include="closest form"
-          hx-target="#dashboard-content"
-          hx-swap="innerHTML"
-          hx-push-url="true"
-          hx-indicator="#inventory-search-spinner"
         >
           <option value="">Todas</option>
           {% for brand in brands %}
@@ -93,13 +77,6 @@
         <select
           name="status"
           class="select select-sm w-full"
-          hx-get="{% url 'inventory:overview' %}"
-          hx-trigger="change"
-          hx-include="closest form"
-          hx-target="#dashboard-content"
-          hx-swap="innerHTML"
-          hx-push-url="true"
-          hx-indicator="#inventory-search-spinner"
         >
           <option value="all" {% if filters.status == "all" %}selected{% endif %}>Todos</option>
           <option value="active" {% if filters.status == "active" %}selected{% endif %}>Activos</option>
@@ -113,16 +90,12 @@
           value="1"
           class="toggle toggle-sm toggle-warning"
           {% if filters.low %}checked{% endif %}
-          hx-get="{% url 'inventory:overview' %}"
-          hx-trigger="change"
-          hx-include="closest form"
-          hx-target="#dashboard-content"
-          hx-swap="innerHTML"
-          hx-push-url="true"
-          hx-indicator="#inventory-search-spinner"
         >
         Bajo stock
       </label>
+      <button type="submit" class="btn btn-neutral btn-sm self-end">
+        Buscar
+      </button>
       <a
         href="{% url 'inventory:overview' %}"
         class="btn btn-ghost btn-sm self-end"
