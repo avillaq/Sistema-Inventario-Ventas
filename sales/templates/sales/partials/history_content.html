@@ -26,12 +26,25 @@
       hx-target="#dashboard-content"
       hx-swap="innerHTML"
       hx-push-url="true"
-      hx-indicator="#nav-spinner"
+      hx-indicator="#history-search-spinner"
     >
-      <label class="form-control">
-        <div class="label py-1"><span class="label-text text-xs">Ticket</span></div>
-        <input type="text" name="ticket" value="{{ filters.ticket }}" placeholder="123" class="input input-sm w-full">
-      </label>
+      <div class="form-control">
+        <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
+        <label class="input input-sm flex w-full items-center gap-2">
+          <span class="text-base-content/50">⌕</span>
+          <input
+            type="search"
+            name="ticket"
+            value="{{ filters.ticket }}"
+            placeholder="Ticket #123"
+            class="grow"
+            hx-trigger="input changed delay:250ms, search"
+          >
+          <span id="history-search-spinner" class="htmx-indicator">
+            <span class="loading loading-spinner loading-xs"></span>
+          </span>
+        </label>
+      </div>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Desde</span></div>
         <input type="date" name="from" value="{{ filters.from }}" class="input input-sm w-full">
@@ -65,6 +78,7 @@
           <tr>
             <th>Ticket</th>
             <th>Fecha</th>
+            <th>Cliente</th>
             <th>Cajero</th>
             <th>Items</th>
             <th class="text-right">Total</th>
@@ -76,6 +90,7 @@
           <tr>
             <td class="font-medium">#{{ sale.id }}</td>
             <td>{{ sale.created_at|date:"Y-m-d H:i" }}</td>
+            <td>{{ sale.customer.full_name }}</td>
             <td>
               {% if sale.cashier %}
                 {{ sale.cashier.get_full_name|default:sale.cashier.username }}
@@ -101,7 +116,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="6" class="py-6 text-center text-base-content/60">
+            <td colspan="7" class="py-6 text-center text-base-content/60">
               No hay ventas con estos filtros.
             </td>
           </tr>

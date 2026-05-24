@@ -37,11 +37,13 @@ def _round_money(value):
     return value.quantize(CENTS)
 
 
-def create_sale(*, cashier, items, tax_rate=None):
+def create_sale(*, cashier, items, customer, tax_rate=None):
     if cashier is not None and not getattr(cashier, "is_authenticated", False):
         cashier = None
 
     normalized = _normalize_items(items)
+    if customer is None:
+        raise ValidationError("Selecciona un cliente para la venta.")
 
     if tax_rate is None:
         tax_rate = default_tax_rate()
@@ -84,6 +86,7 @@ def create_sale(*, cashier, items, tax_rate=None):
 
         sale = Sale.objects.create(
             cashier=cashier,
+            customer=customer,
             subtotal=subtotal,
             tax_rate=tax_rate,
             tax_amount=tax_amount,

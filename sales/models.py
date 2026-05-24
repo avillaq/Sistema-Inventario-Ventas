@@ -62,9 +62,7 @@ class Sale(models.Model):
     )
     customer = models.ForeignKey(
         Customer,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         related_name="sales",
     )
     status = models.CharField(

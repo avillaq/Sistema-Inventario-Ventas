@@ -45,8 +45,10 @@ def _customer_queryset(query):
 @require_GET
 def pos_screen(request):
     products = Product.objects.filter(is_active=True).order_by("name")[:12]
+    customers = Customer.objects.filter(is_active=True).order_by("full_name")[:200]
     context = {
         "products": products,
+        "customers": customers,
         "currency": getattr(settings, "POS_CURRENCY", "PEN"),
         "currency_decimals": getattr(settings, "POS_CURRENCY_DECIMALS", 2),
         "tax_rate": default_tax_rate(),
@@ -83,10 +85,26 @@ def checkout(request):
     except InvalidOperation:
         tax_rate = default_tax_rate()
 
+    customer_id = request.POST.get("customer_id", "").strip()
+    customer = None
+    if customer_id.isdigit():
+        customer = Customer.objects.filter(pk=int(customer_id), is_active=True).first()
+    if customer is None:
+        return render(
+            request,
+            "sales/partials/checkout_message.html",
+            {"status": "error", "message": "Selecciona un cliente activo para la venta."},
+        )
+
     cashier = request.user if getattr(request.user, "is_authenticated", False) else None
 
     try:
-        sale = create_sale(cashier=cashier, items=items, tax_rate=tax_rate)
+        sale = create_sale(
+            cashier=cashier,
+            customer=customer,
+            items=items,
+            tax_rate=tax_rate,
+        )
     except ValidationError as exc:
         message = exc.message if hasattr(exc, "message") else "Sale failed."
         return render(

@@ -182,6 +182,7 @@
         decimals: Number.isFinite(decimals) ? decimals : 2,
         taxRate: Number.isFinite(taxRate) ? taxRate : 0,
         checkoutModalOpen: false,
+        selectedCustomerId: "",
         items: [],
 
         clearServerMessage() {
@@ -332,20 +333,30 @@
           return JSON.stringify(this.itemsPayload());
         },
 
-        clearCart() {
+        clearCart(clearMessage = true) {
           this.items = [];
-          this.clearServerMessage();
+          if (clearMessage) {
+            this.clearServerMessage();
+          }
         },
 
         refreshProducts() {
           const search = document.getElementById("product-search");
           if (search && window.htmx) {
-            htmx.trigger(search, "input");
+            const url = new URL(search.getAttribute("hx-get"), window.location.origin);
+            if (search.value) {
+              url.searchParams.set(search.name || "q", search.value);
+            }
+            htmx.ajax("GET", url.pathname + url.search, {
+              target: "#product-results",
+              swap: "innerHTML",
+            });
           }
         },
 
         completeSale() {
-          this.clearCart();
+          this.clearCart(false);
+          this.selectedCustomerId = "";
           this.checkoutModalOpen = false;
           this.refreshProducts();
         },

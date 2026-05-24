@@ -26,18 +26,25 @@
       hx-target="#dashboard-content"
       hx-swap="innerHTML"
       hx-push-url="true"
-      hx-indicator="#nav-spinner"
+      hx-indicator="#inventory-search-spinner"
     >
-      <label class="form-control">
+      <div class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
-        <input
-          type="search"
-          name="q"
-          value="{{ filters.q }}"
-          placeholder="Nombre o codigo"
-          class="input input-sm w-full"
-        >
-      </label>
+        <label class="input input-sm flex w-full items-center gap-2">
+          <span class="text-base-content/50">⌕</span>
+          <input
+            type="search"
+            name="q"
+            value="{{ filters.q }}"
+            placeholder="Nombre o codigo"
+            class="grow"
+            hx-trigger="input changed delay:250ms, search"
+          >
+          <span id="inventory-search-spinner" class="htmx-indicator">
+            <span class="loading loading-spinner loading-xs"></span>
+          </span>
+        </label>
+      </div>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Categoria</span></div>
         <select name="category" class="select select-sm w-full">
