@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-4">
+<div x-data="{ saleModalOpen: false }" class="flex flex-col gap-4">
   <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
     <div>
       <h1 class="text-xl font-semibold text-neutral">Ventas</h1>
@@ -22,6 +22,7 @@
       method="get"
       class="grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto]"
       hx-get="{% url 'sales:history' %}"
+      hx-trigger="input changed delay:300ms, change"
       hx-target="#dashboard-content"
       hx-swap="innerHTML"
       hx-push-url="true"
@@ -29,7 +30,7 @@
     >
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Ticket</span></div>
-        <input type="text" name="ticket" value="{{ filters.ticket }}" placeholder="#123" class="input input-sm w-full">
+        <input type="text" name="ticket" value="{{ filters.ticket }}" placeholder="123" class="input input-sm w-full">
       </label>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Desde</span></div>
@@ -39,9 +40,17 @@
         <div class="label py-1"><span class="label-text text-xs">Hasta</span></div>
         <input type="date" name="to" value="{{ filters.to }}" class="input input-sm w-full">
       </label>
-      <button type="submit" class="btn btn-neutral btn-sm self-end">
-        Filtrar
-      </button>
+      <a
+        href="{% url 'sales:history' %}"
+        class="btn btn-ghost btn-sm self-end"
+        hx-get="{% url 'sales:history' %}"
+        hx-target="#dashboard-content"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+        hx-indicator="#nav-spinner"
+      >
+        Limpiar
+      </a>
     </form>
   </section>
 
@@ -59,6 +68,7 @@
             <th>Cajero</th>
             <th>Items</th>
             <th class="text-right">Total</th>
+            <th class="text-right">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -75,10 +85,23 @@
             </td>
             <td>{{ sale.items_count }}</td>
             <td class="text-right font-medium">{{ currency }} {{ sale.total|floatformat:2 }}</td>
+            <td class="text-right">
+              <button
+                type="button"
+                class="btn btn-xs btn-ghost"
+                @click="saleModalOpen = true"
+                hx-get="{% url 'sales:sale_detail' sale.id %}"
+                hx-target="#sale-detail-modal-body"
+                hx-swap="innerHTML"
+                hx-indicator="#nav-spinner"
+              >
+                Ver detalle
+              </button>
+            </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="5" class="py-6 text-center text-base-content/60">
+            <td colspan="6" class="py-6 text-center text-base-content/60">
               No hay ventas con estos filtros.
             </td>
           </tr>
@@ -87,4 +110,13 @@
       </table>
     </div>
   </section>
+
+  <div class="modal modal-middle" :class="{ 'modal-open': saleModalOpen }">
+    <div class="modal-box max-w-2xl p-0">
+      <div id="sale-detail-modal-body">
+        <div class="p-6 text-center text-sm text-base-content/60">Selecciona una venta.</div>
+      </div>
+    </div>
+    <button type="button" class="modal-backdrop" @click="saleModalOpen = false">Cerrar</button>
+  </div>
 </div>

@@ -50,12 +50,12 @@
 
     <div class="grid gap-3 sm:grid-cols-2">
       <label class="form-control">
-        <div class="label py-1"><span class="label-text text-xs">Documento</span></div>
+        <div class="label py-1"><span class="label-text text-xs">DNI</span></div>
         {{ form.document_id }}
         {% if form.document_id.errors %}<span class="mt-1 text-xs text-error">{{ form.document_id.errors|striptags }}</span>{% endif %}
       </label>
       <label class="form-control">
-        <div class="label py-1"><span class="label-text text-xs">Telefono</span></div>
+        <div class="label py-1"><span class="label-text text-xs">Telefono (Perú)</span></div>
         {{ form.phone }}
         {% if form.phone.errors %}<span class="mt-1 text-xs text-error">{{ form.phone.errors|striptags }}</span>{% endif %}
       </label>

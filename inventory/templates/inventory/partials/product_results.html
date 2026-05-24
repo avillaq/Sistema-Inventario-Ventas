@@ -38,6 +38,7 @@
             data-name="{{ product.name }}"
             data-barcode="{{ product.barcode }}"
             data-price="{{ product.price|unlocalize }}"
+            data-stock="{{ product.stock }}"
             @click="addItem($el.dataset)"
           >
             Agregar

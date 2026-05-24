@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import MinValueValidator
 
 from .models import Brand, Category, Product
 
@@ -11,6 +12,8 @@ class ProductForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["category"].queryset = Category.objects.filter(is_active=True)
         self.fields["brand"].queryset = Brand.objects.filter(is_active=True)
+        self.fields["price"].validators.append(MinValueValidator(0.01))
+        self.fields["price"].error_messages["min_value"] = "El precio debe ser mayor que 0."
 
     class Meta:
         model = Product
@@ -32,8 +35,8 @@ class ProductForm(forms.ModelForm):
                 attrs={"class": BASE_INPUT_CLASS, "step": "0.01", "min": "0"}
             ),
             "price": forms.NumberInput(
-                attrs={"class": BASE_INPUT_CLASS, "step": "0.01", "min": "0"}
-                ),
+                attrs={"class": BASE_INPUT_CLASS, "step": "0.01", "min": "0.01"}
+            ),
             "stock": forms.NumberInput(
                 attrs={"class": BASE_INPUT_CLASS, "min": "0", "max": Product.MAX_STOCK}
             ),

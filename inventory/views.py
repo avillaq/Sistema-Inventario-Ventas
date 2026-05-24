@@ -37,11 +37,19 @@ def _extract_filters(request):
         or request.GET.get("brand")
         or ""
     ).strip()
-    return query, low, category, brand
+    status = (
+        request.POST.get("current_status")
+        or request.GET.get("current_status")
+        or request.GET.get("status")
+        or "all"
+    ).strip()
+    if status not in {"all", "active", "inactive"}:
+        status = "all"
+    return query, low, category, brand, status
 
 
-def _filtered_products(query, low_stock_only=False, category="", brand=""):
-    products = Product.objects.select_related("category", "brand").filter(is_active=True)
+def _filtered_products(query, low_stock_only=False, category="", brand="", status="all"):
+    products = Product.objects.select_related("category", "brand")
 
     if query:
         products = products.filter(
@@ -57,6 +65,11 @@ def _filtered_products(query, low_stock_only=False, category="", brand=""):
     if brand.isdigit():
         products = products.filter(brand_id=int(brand))
 
+    if status == "active":
+        products = products.filter(is_active=True)
+    elif status == "inactive":
+        products = products.filter(is_active=False)
+
     return products
 
 
@@ -69,8 +82,8 @@ def _filter_choices():
 
 @require_GET
 def inventory_overview(request):
-    query, low_stock_only, category, brand = _extract_filters(request)
-    products = _filtered_products(query, low_stock_only, category, brand)
+    query, low_stock_only, category, brand, status = _extract_filters(request)
+    products = _filtered_products(query, low_stock_only, category, brand, status)
     product_count = products.count()
     products = products.order_by("name")[:200]
 
@@ -82,12 +95,14 @@ def inventory_overview(request):
             "low": "1" if low_stock_only else "",
             "category": category,
             "brand": brand,
+            "status": status,
         },
         "form": ProductForm(),
         "current_q": query,
         "current_low": "1" if low_stock_only else "",
         "current_category": category,
         "current_brand": brand,
+        "current_status": status,
         "currency": getattr(settings, "POS_CURRENCY", "PEN"),
         **_filter_choices(),
     }
@@ -107,6 +122,7 @@ def _form_context(
     low_stock_only,
     category,
     brand,
+    status,
     title,
     submit_label,
     product=None,
@@ -122,11 +138,12 @@ def _form_context(
         "current_low": "1" if low_stock_only else "",
         "current_category": category,
         "current_brand": brand,
+        "current_status": status,
     }
 
 
-def _table_context(query, low_stock_only, category, brand):
-    products = _filtered_products(query, low_stock_only, category, brand)
+def _table_context(query, low_stock_only, category, brand, status):
+    products = _filtered_products(query, low_stock_only, category, brand, status)
     return {
         "products": products.order_by("name")[:200],
         "product_count": products.count(),
@@ -135,12 +152,13 @@ def _table_context(query, low_stock_only, category, brand):
         "current_low": "1" if low_stock_only else "",
         "current_category": category,
         "current_brand": brand,
+        "current_status": status,
     }
 
 
 @require_http_methods(["GET", "POST"])
 def product_create(request):
-    query, low_stock_only, category, brand = _extract_filters(request)
+    query, low_stock_only, category, brand, status = _extract_filters(request)
 
     if request.method == "POST":
         form = ProductForm(request.POST)
@@ -153,11 +171,12 @@ def product_create(request):
                     low_stock_only=low_stock_only,
                     category=category,
                     brand=brand,
+                    status=status,
                     title="Nuevo producto",
                     submit_label="Guardar",
                     message="Producto creado.",
                 ),
-                **_table_context(query, low_stock_only, category, brand),
+                **_table_context(query, low_stock_only, category, brand, status),
             }
             return render(request, "inventory/partials/product_form_response.html", context)
     else:
@@ -169,6 +188,7 @@ def product_create(request):
         low_stock_only=low_stock_only,
         category=category,
         brand=brand,
+        status=status,
         title="Nuevo producto",
         submit_label="Guardar",
     )
@@ -178,7 +198,7 @@ def product_create(request):
 @require_http_methods(["GET", "POST"])
 def product_edit(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    query, low_stock_only, category, brand = _extract_filters(request)
+    query, low_stock_only, category, brand, status = _extract_filters(request)
 
     if request.method == "POST":
         form = ProductForm(request.POST, instance=product)
@@ -191,12 +211,13 @@ def product_edit(request, pk):
                     low_stock_only=low_stock_only,
                     category=category,
                     brand=brand,
+                    status=status,
                     title="Editar producto",
                     submit_label="Actualizar",
                     product=product,
                     message="Producto actualizado.",
                 ),
-                **_table_context(query, low_stock_only, category, brand),
+                **_table_context(query, low_stock_only, category, brand, status),
             }
             return render(request, "inventory/partials/product_form_response.html", context)
     else:
@@ -208,6 +229,7 @@ def product_edit(request, pk):
         low_stock_only=low_stock_only,
         category=category,
         brand=brand,
+        status=status,
         title="Editar producto",
         submit_label="Actualizar",
         product=product,
@@ -218,7 +240,7 @@ def product_edit(request, pk):
 @require_http_methods(["POST"])
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    query, low_stock_only, category, brand = _extract_filters(request)
+    query, low_stock_only, category, brand, status = _extract_filters(request)
     product.delete()
 
     context = {
@@ -228,11 +250,12 @@ def product_delete(request, pk):
             low_stock_only=low_stock_only,
             category=category,
             brand=brand,
+            status=status,
             title="Nuevo producto",
             submit_label="Guardar",
             message="Producto eliminado.",
         ),
-        **_table_context(query, low_stock_only, category, brand),
+        **_table_context(query, low_stock_only, category, brand, status),
     }
     return render(request, "inventory/partials/product_form_response.html", context)
 

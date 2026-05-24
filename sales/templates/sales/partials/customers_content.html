@@ -22,6 +22,7 @@
       method="get"
       class="grid gap-2 md:grid-cols-[1fr_auto]"
       hx-get="{% url 'sales:customers' %}"
+      hx-trigger="input changed delay:300ms"
       hx-target="#dashboard-content"
       hx-swap="innerHTML"
       hx-push-url="true"
@@ -37,9 +38,17 @@
           class="input input-sm w-full"
         >
       </label>
-      <button type="submit" class="btn btn-neutral btn-sm self-end">
-        Filtrar
-      </button>
+      <a
+        href="{% url 'sales:customers' %}"
+        class="btn btn-ghost btn-sm self-end"
+        hx-get="{% url 'sales:customers' %}"
+        hx-target="#dashboard-content"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+        hx-indicator="#nav-spinner"
+      >
+        Limpiar
+      </a>
     </form>
   </section>
 

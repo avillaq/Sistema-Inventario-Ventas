@@ -8,7 +8,7 @@
     <button
       type="button"
       class="btn btn-ghost btn-xs"
-      hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}"
+      hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}&current_status={{ current_status }}"
       hx-target="#inventory-modal-body"
       hx-swap="innerHTML"
       hx-indicator="#nav-spinner"
@@ -44,6 +44,7 @@
     <input type="hidden" name="current_low" value="{{ current_low }}">
     <input type="hidden" name="current_category" value="{{ current_category }}">
     <input type="hidden" name="current_brand" value="{{ current_brand }}">
+    <input type="hidden" name="current_status" value="{{ current_status }}">
 
     <div class="grid gap-3 sm:grid-cols-2">
       <label class="form-control">
@@ -132,6 +133,7 @@
     <input type="hidden" name="current_low" value="{{ current_low }}">
     <input type="hidden" name="current_category" value="{{ current_category }}">
     <input type="hidden" name="current_brand" value="{{ current_brand }}">
+    <input type="hidden" name="current_status" value="{{ current_status }}">
   </form>
   {% endif %}
 </div>

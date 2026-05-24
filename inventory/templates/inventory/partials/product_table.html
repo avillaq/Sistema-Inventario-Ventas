@@ -15,7 +15,7 @@
     </thead>
     <tbody>
       {% for product in products %}
-      <tr>
+      <tr class="{% if not product.is_active %}opacity-70{% endif %}">
         <td class="font-mono text-xs">{{ product.barcode }}</td>
         <td class="font-medium">{{ product.name }}</td>
         <td>{{ product.category.name|default:"-" }}</td>
@@ -24,7 +24,9 @@
         <td>{{ product.min_stock }}</td>
         <td class="text-right">{{ currency }} {{ product.price|floatformat:2 }}</td>
         <td class="text-right">
-          {% if product.is_low_stock %}
+          {% if not product.is_active %}
+          <span class="badge badge-ghost badge-sm">Inactivo</span>
+          {% elif product.is_low_stock %}
           <span class="badge badge-warning badge-sm">Bajo stock</span>
           {% else %}
           <span class="badge badge-success badge-soft badge-sm">Ok</span>
@@ -35,7 +37,7 @@
             type="button"
             class="btn btn-xs btn-ghost"
             @click="productModalOpen = true"
-            hx-get="{% url 'inventory:product_edit' product.id %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}"
+            hx-get="{% url 'inventory:product_edit' product.id %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}&current_status={{ current_status }}"
             hx-target="#inventory-modal-body"
             hx-swap="innerHTML"
             hx-indicator="#nav-spinner"

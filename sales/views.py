@@ -144,6 +144,22 @@ def sales_history(request):
     return render(request, template, context)
 
 
+@require_GET
+def sale_detail(request, pk):
+    sale = get_object_or_404(
+        Sale.objects.select_related("cashier", "customer").prefetch_related("items"),
+        pk=pk,
+    )
+    return render(
+        request,
+        "sales/partials/sale_detail.html",
+        {
+            "sale": sale,
+            "currency": getattr(settings, "POS_CURRENCY", "PEN"),
+        },
+    )
+
+
 def _customer_form_context(*, form, query, title, submit_label, customer=None, message=None):
     return {
         "form": form,
