@@ -14,7 +14,7 @@
   <section class="panel rounded-3xl p-6">
     <form
       method="get"
-      class="grid gap-4 lg:grid-cols-[2fr_1fr_auto_auto]"
+      class="grid gap-4 lg:grid-cols-[1.4fr_1fr_1fr_0.8fr_auto_auto]"
       hx-get="{% url 'inventory:overview' %}"
       hx-target="#dashboard-content"
       hx-swap="innerHTML"
@@ -30,6 +30,34 @@
           placeholder="Nombre o codigo"
           class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800"
         >
+      </label>
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Categoria
+        <select
+          name="category"
+          class="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800"
+        >
+          <option value="">Todas</option>
+          {% for category in categories %}
+          <option value="{{ category.id }}" {% if filters.category == category.id|stringformat:"s" %}selected{% endif %}>
+            {{ category.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
+        Marca
+        <select
+          name="brand"
+          class="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800"
+        >
+          <option value="">Todas</option>
+          {% for brand in brands %}
+          <option value="{{ brand.id }}" {% if filters.brand == brand.id|stringformat:"s" %}selected{% endif %}>
+            {{ brand.name }}
+          </option>
+          {% endfor %}
+        </select>
       </label>
       <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
         Bajo stock
@@ -50,7 +78,7 @@
       <button
         type="button"
         class="btn btn-outline btn-lg self-end"
-        hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q }}&current_low={{ current_low }}"
+        hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}"
         hx-target="#inventory-form-panel"
         hx-swap="innerHTML"
         hx-indicator="#nav-spinner"
@@ -74,7 +102,7 @@
 
     <aside class="panel rounded-3xl p-6">
       <div id="inventory-form-panel">
-        {% include "inventory/partials/product_form.html" with form=form form_title="Nuevo producto" submit_label="Guardar" current_q=current_q current_low=current_low %}
+        {% include "inventory/partials/product_form.html" with form=form form_title="Nuevo producto" submit_label="Guardar" current_q=current_q current_low=current_low current_category=current_category current_brand=current_brand %}
       </div>
     </aside>
   </section>

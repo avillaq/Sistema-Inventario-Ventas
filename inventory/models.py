@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -34,6 +34,8 @@ class Brand(models.Model):
 
 
 class Product(models.Model):
+    MAX_STOCK = 10000
+
     barcode = models.CharField(max_length=64, unique=True)
     name = models.CharField(max_length=200)
     cost = models.DecimalField(
@@ -46,8 +48,14 @@ class Product(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(Decimal("0.00"))],
     )
-    stock = models.PositiveIntegerField(default=0)
-    min_stock = models.PositiveIntegerField(default=0)
+    stock = models.PositiveIntegerField(
+        default=0,
+        validators=[MaxValueValidator(MAX_STOCK)],
+    )
+    min_stock = models.PositiveIntegerField(
+        default=0,
+        validators=[MaxValueValidator(MAX_STOCK)],
+    )
     category = models.ForeignKey(
         Category,
         null=True,

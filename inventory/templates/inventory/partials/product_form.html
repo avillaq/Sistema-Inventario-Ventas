@@ -6,7 +6,7 @@
   <button
     type="button"
     class="btn btn-ghost btn-xs"
-    hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}"
+    hx-get="{% url 'inventory:product_create' %}?current_q={{ current_q|urlencode }}&current_low={{ current_low }}&current_category={{ current_category }}&current_brand={{ current_brand }}"
     hx-target="#inventory-form-panel"
     hx-swap="innerHTML"
     hx-indicator="#nav-spinner"
@@ -38,6 +38,8 @@
   {% csrf_token %}
   <input type="hidden" name="current_q" value="{{ current_q }}">
   <input type="hidden" name="current_low" value="{{ current_low }}">
+  <input type="hidden" name="current_category" value="{{ current_category }}">
+  <input type="hidden" name="current_brand" value="{{ current_brand }}">
 
   <div class="grid gap-3">
     <label class="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-slate-500">
@@ -125,6 +127,8 @@
   {% csrf_token %}
   <input type="hidden" name="current_q" value="{{ current_q }}">
   <input type="hidden" name="current_low" value="{{ current_low }}">
+  <input type="hidden" name="current_category" value="{{ current_category }}">
+  <input type="hidden" name="current_brand" value="{{ current_brand }}">
   <button type="submit" class="btn btn-error btn-outline btn-sm">
     Eliminar producto
   </button>
