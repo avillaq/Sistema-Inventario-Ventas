@@ -12,21 +12,21 @@ CENTS = Decimal("0.01")
 
 def _normalize_items(items):
     if not isinstance(items, list) or not items:
-        raise ValidationError("Cart is empty.")
+        raise ValidationError("El carrito está vacío.")
 
     aggregated = {}
 
     for item in items:
         if not isinstance(item, dict):
-            raise ValidationError("Invalid item data.")
+            raise ValidationError("Datos del artículo inválidos.")
         try:
             product_id = int(item.get("product_id"))
             quantity = int(item.get("quantity"))
         except (TypeError, ValueError):
-            raise ValidationError("Invalid item data.")
+            raise ValidationError("Datos del artículo inválidos.")
 
         if product_id <= 0 or quantity <= 0:
-            raise ValidationError("Invalid quantity.")
+            raise ValidationError("Cantidad inválida.")
 
         aggregated[product_id] = aggregated.get(product_id, 0) + quantity
 
@@ -50,10 +50,10 @@ def create_sale(*, cashier, items, tax_rate=None):
         try:
             tax_rate = Decimal(str(tax_rate))
         except (InvalidOperation, TypeError, ValueError):
-            raise ValidationError("Invalid tax rate.")
+            raise ValidationError("Tasa de impuesto inválida.")
 
     if not tax_rate.is_finite() or tax_rate < 0:
-        raise ValidationError("Invalid tax rate.")
+        raise ValidationError("Tasa de impuesto inválida.")
 
     product_ids = list(normalized.keys())
 
@@ -65,7 +65,7 @@ def create_sale(*, cashier, items, tax_rate=None):
         product_map = {product.id: product for product in products}
 
         if len(product_map) != len(product_ids):
-            raise ValidationError("Some products are not available.")
+            raise ValidationError("Algunos productos no están disponibles.")
 
         subtotal = Decimal("0.00")
         line_items = []
@@ -73,7 +73,7 @@ def create_sale(*, cashier, items, tax_rate=None):
         for product_id, quantity in normalized.items():
             product = product_map[product_id]
             if product.stock < quantity:
-                raise ValidationError(f"Insufficient stock for {product.name}.")
+                raise ValidationError(f"Stock insuficiente para {product.name}.")
 
             line_total = _round_money(product.price * quantity)
             subtotal += line_total

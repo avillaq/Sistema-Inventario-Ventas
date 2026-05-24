@@ -28,8 +28,12 @@ class ProductForm(forms.ModelForm):
         widgets = {
             "barcode": forms.TextInput(attrs={"class": BASE_INPUT_CLASS}),
             "name": forms.TextInput(attrs={"class": BASE_INPUT_CLASS}),
-            "cost": forms.NumberInput(attrs={"class": BASE_INPUT_CLASS, "step": "0.01"}),
-            "price": forms.NumberInput(attrs={"class": BASE_INPUT_CLASS, "step": "0.01"}),
+            "cost": forms.NumberInput(
+                attrs={"class": BASE_INPUT_CLASS, "step": "0.01", "min": "0"}
+            ),
+            "price": forms.NumberInput(
+                attrs={"class": BASE_INPUT_CLASS, "step": "0.01", "min": "0"}
+                ),
             "stock": forms.NumberInput(
                 attrs={"class": BASE_INPUT_CLASS, "min": "0", "max": Product.MAX_STOCK}
             ),
