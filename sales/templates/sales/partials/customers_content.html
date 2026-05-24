@@ -21,24 +21,25 @@
     <form
       method="get"
       class="grid gap-2 md:grid-cols-[1fr_auto]"
-      hx-get="{% url 'sales:customers' %}"
-      hx-trigger="input changed delay:300ms"
-      hx-target="#dashboard-content"
-      hx-swap="innerHTML"
-      hx-push-url="true"
-      hx-indicator="#customer-search-spinner"
     >
       <div class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
         <label class="input input-sm flex w-full items-center gap-2">
           <span class="text-base-content/50">⌕</span>
           <input
+            id="customer-search"
             type="search"
             name="q"
             value="{{ filters.q }}"
             placeholder="Nombre, DNI, correo o telefono"
             class="grow"
-            hx-trigger="input changed delay:250ms, search"
+            hx-get="{% url 'sales:customers' %}"
+            hx-trigger="input delay:250ms, search"
+            hx-include="closest form"
+            hx-target="#dashboard-content"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            hx-indicator="#customer-search-spinner"
           >
           <span id="customer-search-spinner" class="htmx-indicator">
             <span class="loading loading-spinner loading-xs"></span>

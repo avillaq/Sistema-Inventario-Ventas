@@ -21,24 +21,25 @@
     <form
       method="get"
       class="grid gap-2 md:grid-cols-2 xl:grid-cols-[1.4fr_1fr_1fr_1fr_auto_auto]"
-      hx-get="{% url 'inventory:overview' %}"
-      hx-trigger="input changed delay:300ms, change"
-      hx-target="#dashboard-content"
-      hx-swap="innerHTML"
-      hx-push-url="true"
-      hx-indicator="#inventory-search-spinner"
     >
       <div class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
         <label class="input input-sm flex w-full items-center gap-2">
           <span class="text-base-content/50">⌕</span>
           <input
+            id="inventory-search"
             type="search"
             name="q"
             value="{{ filters.q }}"
             placeholder="Nombre o codigo"
             class="grow"
-            hx-trigger="input changed delay:250ms, search"
+            hx-get="{% url 'inventory:overview' %}"
+            hx-trigger="input delay:250ms, search"
+            hx-include="closest form"
+            hx-target="#dashboard-content"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            hx-indicator="#inventory-search-spinner"
           >
           <span id="inventory-search-spinner" class="htmx-indicator">
             <span class="loading loading-spinner loading-xs"></span>
@@ -47,7 +48,17 @@
       </div>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Categoria</span></div>
-        <select name="category" class="select select-sm w-full">
+        <select
+          name="category"
+          class="select select-sm w-full"
+          hx-get="{% url 'inventory:overview' %}"
+          hx-trigger="change"
+          hx-include="closest form"
+          hx-target="#dashboard-content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-indicator="#inventory-search-spinner"
+        >
           <option value="">Todas</option>
           {% for category in categories %}
           <option value="{{ category.id }}" {% if filters.category == category.id|stringformat:"s" %}selected{% endif %}>
@@ -58,7 +69,17 @@
       </label>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Marca</span></div>
-        <select name="brand" class="select select-sm w-full">
+        <select
+          name="brand"
+          class="select select-sm w-full"
+          hx-get="{% url 'inventory:overview' %}"
+          hx-trigger="change"
+          hx-include="closest form"
+          hx-target="#dashboard-content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-indicator="#inventory-search-spinner"
+        >
           <option value="">Todas</option>
           {% for brand in brands %}
           <option value="{{ brand.id }}" {% if filters.brand == brand.id|stringformat:"s" %}selected{% endif %}>
@@ -69,7 +90,17 @@
       </label>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Estado</span></div>
-        <select name="status" class="select select-sm w-full">
+        <select
+          name="status"
+          class="select select-sm w-full"
+          hx-get="{% url 'inventory:overview' %}"
+          hx-trigger="change"
+          hx-include="closest form"
+          hx-target="#dashboard-content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-indicator="#inventory-search-spinner"
+        >
           <option value="all" {% if filters.status == "all" %}selected{% endif %}>Todos</option>
           <option value="active" {% if filters.status == "active" %}selected{% endif %}>Activos</option>
           <option value="inactive" {% if filters.status == "inactive" %}selected{% endif %}>Inactivos</option>
@@ -82,6 +113,13 @@
           value="1"
           class="toggle toggle-sm toggle-warning"
           {% if filters.low %}checked{% endif %}
+          hx-get="{% url 'inventory:overview' %}"
+          hx-trigger="change"
+          hx-include="closest form"
+          hx-target="#dashboard-content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-indicator="#inventory-search-spinner"
         >
         Bajo stock
       </label>

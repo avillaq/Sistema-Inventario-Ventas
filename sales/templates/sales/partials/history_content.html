@@ -21,24 +21,25 @@
     <form
       method="get"
       class="grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto]"
-      hx-get="{% url 'sales:history' %}"
-      hx-trigger="input changed delay:300ms, change"
-      hx-target="#dashboard-content"
-      hx-swap="innerHTML"
-      hx-push-url="true"
-      hx-indicator="#history-search-spinner"
     >
       <div class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Buscar</span></div>
         <label class="input input-sm flex w-full items-center gap-2">
           <span class="text-base-content/50">⌕</span>
           <input
+            id="history-search"
             type="search"
             name="ticket"
             value="{{ filters.ticket }}"
             placeholder="Ticket #123"
             class="grow"
-            hx-trigger="input changed delay:250ms, search"
+            hx-get="{% url 'sales:history' %}"
+            hx-trigger="input delay:250ms, search"
+            hx-include="closest form"
+            hx-target="#dashboard-content"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            hx-indicator="#history-search-spinner"
           >
           <span id="history-search-spinner" class="htmx-indicator">
             <span class="loading loading-spinner loading-xs"></span>
@@ -47,11 +48,35 @@
       </div>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Desde</span></div>
-        <input type="date" name="from" value="{{ filters.from }}" class="input input-sm w-full">
+        <input
+          type="date"
+          name="from"
+          value="{{ filters.from }}"
+          class="input input-sm w-full"
+          hx-get="{% url 'sales:history' %}"
+          hx-trigger="change"
+          hx-include="closest form"
+          hx-target="#dashboard-content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-indicator="#history-search-spinner"
+        >
       </label>
       <label class="form-control">
         <div class="label py-1"><span class="label-text text-xs">Hasta</span></div>
-        <input type="date" name="to" value="{{ filters.to }}" class="input input-sm w-full">
+        <input
+          type="date"
+          name="to"
+          value="{{ filters.to }}"
+          class="input input-sm w-full"
+          hx-get="{% url 'sales:history' %}"
+          hx-trigger="change"
+          hx-include="closest form"
+          hx-target="#dashboard-content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-indicator="#history-search-spinner"
+        >
       </label>
       <a
         href="{% url 'sales:history' %}"

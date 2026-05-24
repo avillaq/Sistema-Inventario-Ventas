@@ -42,6 +42,14 @@ class Customer(models.Model):
                 condition=~models.Q(email=""),
                 name="unique_customer_email",
             ),
+            models.CheckConstraint(
+                check=~models.Q(document_id=""),
+                name="customer_document_id_required",
+            ),
+            models.CheckConstraint(
+                check=~models.Q(phone=""),
+                name="customer_phone_required",
+            ),
         ]
 
     def __str__(self):
