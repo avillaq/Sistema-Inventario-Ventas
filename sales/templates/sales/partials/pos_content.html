@@ -37,6 +37,7 @@
                 name="q"
                 placeholder="Buscar por codigo, nombre, categoria o marca"
                 class="grow"
+                x-ref="productSearch"
               >
               <span id="search-spinner" class="htmx-indicator">
                 <span class="loading loading-spinner loading-xs"></span>
@@ -46,6 +47,17 @@
           <button type="submit" class="btn btn-neutral btn-sm self-end">
             Buscar
           </button>
+          <a
+            href="{% url 'inventory:product_search' %}"
+            class="btn btn-ghost btn-sm self-end"
+            @click="$refs.productSearch.value = ''"
+            hx-get="{% url 'inventory:product_search' %}"
+            hx-target="#product-results"
+            hx-swap="innerHTML"
+            hx-indicator="#search-spinner"
+          >
+            Limpiar
+          </a>
         </form>
       </div>
       <div id="product-results">

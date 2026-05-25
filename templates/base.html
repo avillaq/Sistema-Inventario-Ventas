@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
   <style>
     body {
       font-family: "Inter", sans-serif;
@@ -170,6 +171,154 @@
         "/pos/history": "Historial de Ventas",
       };
       document.title = titles[currentPath] || document.querySelector("h1")?.textContent?.trim() || "Dashboard";
+    }
+
+    function initPosDashboardCharts() {
+      if (typeof Chart === "undefined") {
+        return;
+      }
+
+      const dataHolder = document.getElementById("dashboard-charts-data");
+      const charts = window.posDashboardCharts || {};
+
+      const destroyChart = (key) => {
+        if (charts[key]) {
+          charts[key].destroy();
+          delete charts[key];
+        }
+      };
+
+      if (!dataHolder) {
+        Object.keys(charts).forEach((key) => destroyChart(key));
+        window.posDashboardCharts = {};
+        return;
+      }
+
+      const salesData = JSON.parse(dataHolder.dataset.sales || "[]");
+      const topProductsData = JSON.parse(dataHolder.dataset.topProducts || "[]");
+      const currency = dataHolder.dataset.currency || "PEN";
+      const formatMoney = (value) => `${currency} ${Number(value || 0).toFixed(2)}`;
+
+      const salesCanvas = document.getElementById("sales-7d-chart");
+      if (salesCanvas) {
+        destroyChart("sales");
+        const salesLabels = salesData.map((item) => item.label);
+        const salesTotals = salesData.map((item) => item.total);
+        const salesCounts = salesData.map((item) => item.count);
+        charts.sales = new Chart(salesCanvas, {
+          type: "line",
+          data: {
+            labels: salesLabels,
+            datasets: [
+              {
+                label: "Monto",
+                data: salesTotals,
+                borderColor: "rgba(59, 130, 246, 0.9)",
+                backgroundColor: "rgba(59, 130, 246, 0.2)",
+                pointRadius: 3,
+                tension: 0.35,
+                fill: true,
+                yAxisID: "y",
+              },
+              {
+                label: "Tickets",
+                data: salesCounts,
+                borderColor: "rgba(34, 197, 94, 0.9)",
+                backgroundColor: "rgba(34, 197, 94, 0.2)",
+                pointRadius: 3,
+                tension: 0.35,
+                fill: false,
+                yAxisID: "y1",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { position: "bottom" },
+              tooltip: {
+                callbacks: {
+                  label: (context) => {
+                    const value = context.parsed.y ?? 0;
+                    if (context.dataset.label === "Monto") {
+                      return `${context.dataset.label}: ${formatMoney(value)}`;
+                    }
+                    return `${context.dataset.label}: ${Math.round(value)}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: (value) => formatMoney(value),
+                },
+              },
+              y1: {
+                beginAtZero: true,
+                position: "right",
+                grid: { drawOnChartArea: false },
+                ticks: { precision: 0 },
+              },
+            },
+          },
+        });
+      } else {
+        destroyChart("sales");
+      }
+
+      const topCanvas = document.getElementById("top-products-chart");
+      if (topCanvas) {
+        destroyChart("topProducts");
+        const topLabels = topProductsData.map((item) => item.name);
+        const topQuantities = topProductsData.map((item) => item.quantity);
+        const topTotals = topProductsData.map((item) => item.total);
+        charts.topProducts = new Chart(topCanvas, {
+          type: "bar",
+          data: {
+            labels: topLabels,
+            datasets: [
+              {
+                label: "Cantidad",
+                data: topQuantities,
+                backgroundColor: "rgba(14, 165, 233, 0.8)",
+                borderColor: "rgba(14, 165, 233, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: "y",
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (context) => {
+                    const quantity = context.parsed.x ?? 0;
+                    const total = topTotals[context.dataIndex] ?? 0;
+                    return `Cantidad: ${quantity} | Total: ${formatMoney(total)}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                ticks: { precision: 0 },
+              },
+            },
+          },
+        });
+      } else {
+        destroyChart("topProducts");
+      }
+
+      window.posDashboardCharts = charts;
     }
 
     function posCart(config) {
@@ -365,6 +514,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       setActiveNav();
       setDocumentTitle();
+      initPosDashboardCharts();
       if (window.htmx) {
         htmx.config.selfRequestsOnly = true;
         htmx.config.allowScriptTags = false;
@@ -374,6 +524,7 @@
     document.addEventListener("htmx:afterSwap", (event) => {
       setActiveNav();
       setDocumentTitle();
+      initPosDashboardCharts();
     });
 
     window.addEventListener("popstate", () => {

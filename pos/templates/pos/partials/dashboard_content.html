@@ -37,6 +37,41 @@
     </div>
   </section>
 
+  <section class="grid gap-4 lg:grid-cols-2">
+    <div class="panel p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-semibold text-neutral">Ventas ultimos 7 dias</h2>
+          <p class="text-xs text-base-content/60">Monto total y tickets completados.</p>
+        </div>
+        <span class="badge badge-sm">Semana</span>
+      </div>
+      <div class="mt-4 h-64">
+        <canvas id="sales-7d-chart" role="img" aria-label="Ventas ultimos 7 dias"></canvas>
+      </div>
+    </div>
+    <div class="panel p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-semibold text-neutral">Productos estrella</h2>
+          <p class="text-xs text-base-content/60">Top 5 del mes por unidades.</p>
+        </div>
+        <span class="badge badge-sm">Mes actual</span>
+      </div>
+      <div class="mt-4 h-64">
+        <canvas id="top-products-chart" role="img" aria-label="Productos estrella del mes"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <div
+    id="dashboard-charts-data"
+    class="hidden"
+    data-sales="{{ sales_last_7_json|escape }}"
+    data-top-products="{{ top_products_chart_json|escape }}"
+    data-currency="{{ currency|escape }}"
+  ></div>
+
   <section class="panel overflow-hidden">
     <div class="flex items-center justify-between border-b border-base-300 px-4 py-3">
       <div>
