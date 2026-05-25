@@ -44,3 +44,36 @@ def test_pos_cart_caps_quantity_at_stock_ui(live_server, page):
 
     message = page.locator("#checkout-message")
     expect(message).to_contain_text("Stock disponible alcanzado")
+
+
+@pytest.mark.django_db(transaction=True)
+def test_pos_cart_removes_item_when_quantity_zero_ui(live_server, page):
+    Product.objects.create(
+        barcode="BBB-001",
+        name="BBB Widget",
+        cost="10.00",
+        price="15.00",
+        stock=5,
+        min_stock=1,
+        is_active=True,
+    )
+    Customer.objects.create(
+        full_name="Cliente POS",
+        document_id="87654321",
+        email="",
+        phone="912345678",
+        is_active=True,
+    )
+
+    page.goto(live_server.url + reverse("sales:pos"))
+
+    row = page.locator("tr:has-text('BBB Widget')")
+    expect(row).to_be_visible()
+    row.get_by_role("button", name="Agregar").click()
+
+    qty_input = page.locator("tbody tr:has-text('BBB Widget') input[type='number']")
+    qty_input.fill("0")
+    qty_input.press("Tab")
+
+    empty_state = page.get_by_text("Aun no hay productos en el carrito.")
+    expect(empty_state).to_be_visible()
