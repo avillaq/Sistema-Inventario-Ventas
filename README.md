@@ -39,17 +39,7 @@ python -m pip install -r requirements.txt
 
 ---
 
-## 2. Instalar pytest-django
-
-Instalar `pytest-django` para ejecutar correctamente las pruebas automáticas:
-
-```bash
-pip install pytest-django
-```
-
----
-
-## 3. Aplicar Migraciones
+## 2. Aplicar Migraciones
 
 Crear las tablas necesarias en la base de datos:
 
@@ -59,7 +49,7 @@ python manage.py migrate
 
 ---
 
-## 4. Cargar Datos de Prueba
+## 3. Cargar Datos de Prueba
 
 Cargar datos de demostración en el sistema:
 
@@ -69,9 +59,9 @@ python manage.py seed_demo
 
 ---
 
-## 5. Ejecutar las Pruebas
+## 4. Ejecutar las Pruebas
 
-Ejecutar las pruebas automáticas del proyecto:
+Ejecutar las pruebas de caja negra (PE, AVL)  automáticas del proyecto:
 
 ```bash
 python -m pytest -v
@@ -85,7 +75,7 @@ Si todo se ejecuta correctamente deberá mostrarse algo similar a:
 
 ---
 
-## 6. Ejecutar el Servidor
+## 5. Ejecutar el Servidor
 
 Iniciar el servidor local del sistema:
 

@@ -11,7 +11,16 @@ Sistema de Inventario y Ventas
 
 ## Descripcion
 
-Aplicacion web en Django para gestionar inventario, clientes y ventas con soporte de HTMX y Alpine.js.
+El proyecto **Sistema de Inventario y Ventas** es una aplicación web desarrollada con Django y Python.  
+El sistema permite gestionar productos, categorías, inventario y ventas mediante una interfaz web.
+
+Entre sus funcionalidades principales se encuentran:
+
+- Gestión de productos
+- Control de inventario
+- Registro de ventas
+- Validación de stock
+- Pruebas automáticas del sistema
 
 ## Validaciones
 
