@@ -28,23 +28,19 @@ El sistema permite gestionar productos, inventario, clientes y ventas mediante u
 	```bash
 	python -m pip install -r requirements.txt
 	```
-2. Instalar navegadores de Playwright (para pruebas UI):
-	```bash
-	python -m playwright install
-	```
-3. Aplicar migraciones:
+2. Aplicar migraciones:
 	```bash
 	python manage.py migrate
 	```
-4. Cargar datos de prueba:
+3. Cargar datos de prueba:
 	```bash
 	python manage.py seed_demo
 	```
-5. Iniciar el servidor:
+4. Iniciar el servidor:
 	```bash
 	python manage.py runserver
 	```
-6. Abrir el sistema en el navegador:
+5. Abrir el sistema en el navegador:
 	```text
 	http://127.0.0.1:8000
 	```
