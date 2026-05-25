@@ -15,8 +15,10 @@ def test_inventory_stock_rejects_non_numeric_input_ui(live_server, page, invalid
     page.fill("input[name='cost']", "10.00")
     page.fill("input[name='price']", "15.00")
     stock_input = page.locator("input[name='stock']")
-    stock_input.fill(invalid_value)
+    stock_input.fill("0")
+    stock_input.click()
+    stock_input.type(invalid_value)
     page.fill("input[name='min_stock']", "1")
 
-    is_valid = stock_input.evaluate("el => el.checkValidity()")
-    assert is_valid is False
+    value = stock_input.input_value()
+    assert value == "0"
