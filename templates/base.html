@@ -21,6 +21,20 @@
       border-radius: 0.5rem;
     }
 
+    .nav-link {
+      position: relative;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .nav-link.active {
+      background: color-mix(in srgb, #000 10%, transparent);
+      color: #000;
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, #000 12%, transparent);
+      font-weight: 600;
+    }
+
     .htmx-indicator {
       opacity: 0;
       transition: opacity 200ms ease;

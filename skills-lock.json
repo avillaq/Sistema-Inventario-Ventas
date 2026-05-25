@@ -13,12 +13,6 @@
       "skillPath": "alpinejs/SKILL.md",
       "computedHash": "1fa63d26e5f3e7768f2f4e91366ffc856be376addac4daadb21088e453377881"
     },
-    "chartjs-generator": {
-      "source": "vishalsachdev/claude-skills",
-      "sourceType": "github",
-      "skillPath": "chartjs-generator/SKILL.md",
-      "computedHash": "139317eb0fbbb4f382443f49ad08ec42293cab7fa63c5c95c732ae2fd9e19ae4"
-    },
     "daisyui": {
       "source": "saadeghi/daisyui",
       "sourceType": "github",
