@@ -1,99 +1,70 @@
 # Sistema de Inventario y Ventas
 
-## Descripción del Proyecto
+## Descripcion del proyecto
 
 El proyecto **Sistema de Inventario y Ventas** es una aplicación web desarrollada con Django y Python.  
-El sistema permite gestionar productos, categorías, inventario y ventas mediante una interfaz web.
+El sistema permite gestionar productos, inventario, clientes y ventas mediante una interfaz web.
 
-Entre sus funcionalidades principales se encuentran:
+### Funcionalidades principales
 
-- Gestión de productos
-- Control de inventario
-- Registro de ventas
-- Validación de stock
-- Pruebas automáticas del sistema
-
-Este documento tiene como finalidad explicar el proceso de instalación y ejecución del sistema para que otros usuarios puedan probar el proyecto correctamente.
+- Catalogo de productos con control de stock.
+- POS con carrito en tiempo real y validaciones de cantidad.
+- Historial de ventas con filtros.
+- Gestion de clientes con validaciones basicas.
 
 ---
 
-# Requisitos del Sistema
-
-Antes de ejecutar el proyecto, verificar que el equipo tenga instalado:
+## Requisitos del sistema
 
 - Python 3.10 o superior
 - Pip
-- Navegador web (Google Chrome, Edge o Firefox)
+- Navegador web (Chrome, Edge o Firefox)
 
 ---
 
-# Instalación del Proyecto
+## Como ejecutar el programa
 
-## 1. Instalar Dependencias
-
-Ejecutar el siguiente comando para instalar las librerías necesarias:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
----
-
-## 2. Aplicar Migraciones
-
-Crear las tablas necesarias en la base de datos:
-
-```bash
-python manage.py migrate
-```
-
----
-
-## 3. Cargar Datos de Prueba
-
-Cargar datos de demostración en el sistema:
-
-```bash
-python manage.py seed_demo
-```
+1. Instalar dependencias:
+	```bash
+	python -m pip install -r requirements.txt
+	```
+2. Instalar navegadores de Playwright (para pruebas UI):
+	```bash
+	python -m playwright install
+	```
+3. Aplicar migraciones:
+	```bash
+	python manage.py migrate
+	```
+4. Cargar datos de prueba:
+	```bash
+	python manage.py seed_demo
+	```
+5. Iniciar el servidor:
+	```bash
+	python manage.py runserver
+	```
+6. Abrir el sistema en el navegador:
+	```text
+	http://127.0.0.1:8000
+	```
 
 ---
 
-## 4. Ejecutar las Pruebas
+## Pruebas
 
-Ejecutar las pruebas de caja negra (PE, AVL)  automáticas del proyecto:
-
-```bash
-python -m pytest -v
-```
-
-Si todo se ejecuta correctamente deberá mostrarse algo similar a:
-
-```text
-22 passed
-```
+- Ejecutar toda la suite:
+  ```bash
+  python -m pytest -q
+  ```
+- Ejecutar con salida detallada:
+  ```bash
+  python -m pytest -v
+  ```
 
 ---
 
-## 5. Ejecutar el Servidor
-
-Iniciar el servidor local del sistema:
-
-```bash
-python manage.py runserver
-```
-
----
-
-# Acceso al Sistema
-
-Abrir el navegador web e ingresar al siguiente enlace:
-
-http://127.0.0.1:8000
-
----
-
-# Datos validos
+## Datos validos
 
 - Producto: `stock` y `min_stock` entre 0 y 10,000.
 - Producto: `price` mayor que 0; `cost` mayor o igual a 0.
@@ -102,7 +73,7 @@ http://127.0.0.1:8000
 
 ---
 
-# Restricciones
+## Restricciones
 
 - `barcode` de producto es unico.
 - `document_id` y `email` de cliente son unicos si se registran.
@@ -111,19 +82,15 @@ http://127.0.0.1:8000
 
 ---
 
-# Recomendaciones para las Pruebas
+## Recomendaciones para pruebas manuales
 
-Durante la evaluación del sistema se recomienda probar:
-
-- Registro de productos
-- Actualización de inventario
-- Registro de ventas
-- Validación de formularios
-- Ingreso de datos inválidos
-- Manejo de errores del sistema
+- Crear, editar y eliminar productos.
+- Probar limites de stock y min_stock.
+- Procesar ventas con cantidades validas e invalidas.
+- Registrar clientes con DNI y telefono validos.
 
 ---
 
-# Observaciones
+## Observaciones
 
-Seguir correctamente los pasos descritos en este manual permitirá ejecutar el sistema adecuadamente para realizar pruebas funcionales y detectar posibles errores del proyecto.
+Seguir estos pasos asegura la ejecucion correcta del sistema y permite validar los flujos principales con datos reales y pruebas automatizadas.
