@@ -122,24 +122,6 @@ Restricciones:
 
 ---
 
-## Datos validos
-
-- Producto: `stock` y `min_stock` entre 0 y 10,000.
-- Producto: `price` mayor que 0; `cost` mayor o igual a 0.
-- Cliente: `document_id` con 8 digitos y `phone` con 9 digitos.
-- POS: cantidad de venta minimo 1 y maximo igual al stock disponible.
-
----
-
-## Restricciones
-
-- `barcode` de producto es unico.
-- `document_id` y `email` de cliente son unicos si se registran.
-- No se puede procesar venta sin cliente activo seleccionado.
-- No se permite vender cantidad mayor al stock ni valores negativos.
-
----
-
 ## Recomendaciones para pruebas manuales
 
 - Crear, editar y eliminar productos.
