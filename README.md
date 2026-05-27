@@ -1,9 +1,8 @@
 # Sistema de Inventario y Ventas
 
-## Descripcion del proyecto
+El proyecto **Sistema de Inventario y Ventas** es una aplicación web desarrollada con Django y Python. El sistema permite gestionar productos, inventario, clientes y ventas mediante una interfaz web.
 
-El proyecto **Sistema de Inventario y Ventas** es una aplicación web desarrollada con Django y Python.  
-El sistema permite gestionar productos, inventario, clientes y ventas mediante una interfaz web.
+![Dashboard del sistema](docs/images/dashboard.png)
 
 ### Funcionalidades principales
 
@@ -11,6 +10,69 @@ El sistema permite gestionar productos, inventario, clientes y ventas mediante u
 - POS con carrito en tiempo real y validaciones de cantidad.
 - Historial de ventas con filtros.
 - Gestion de clientes con validaciones basicas.
+
+## Pantallas principales
+
+### POS / Caja
+
+Punto de venta con carrito, seleccion de cliente y calculo de totales.
+
+![POS - punto de venta](docs/images/pos.png)
+
+Datos validos:
+- Cantidad por producto: minimo 1 y maximo igual al stock disponible.
+- `tax_rate`: valor numerico mayor o igual a 0.
+- Productos: deben estar activos y con stock suficiente.
+
+Restricciones:
+- No se procesa venta sin cliente activo seleccionado.
+- No se permite vender cantidades mayores al stock ni valores negativos.
+- El carrito no puede estar vacio.
+
+### Inventario
+
+Gestion de productos, stock, estado y filtros (categoria, marca, bajo stock).
+
+![Inventario](docs/images/inventario.png)
+
+Datos validos:
+- `stock` y `min_stock` entre 0 y 10,000.
+- `price` mayor que 0; `cost` mayor o igual a 0.
+- `barcode` y `name` son obligatorios.
+
+Restricciones:
+- `barcode` es unico.
+- Solo se aceptan valores numericos en `stock` y `min_stock`.
+- Productos inactivos no aparecen en el POS.
+
+### Clientes
+
+Gestion de clientes con busqueda, creacion y edicion.
+
+![Clientes](docs/images/clientes.png)
+
+Datos validos:
+- `document_id` con 8 digitos numericos.
+- `phone` con 9 digitos numericos.
+- `email` opcional con formato valido.
+
+Restricciones:
+- `document_id` y `email` son unicos si se registran.
+- `document_id` y `phone` no pueden estar vacios.
+
+### Ventas
+
+Historial de ventas con filtros por ticket y rango de fechas.
+
+![Historial de ventas](docs/images/ventas.png)
+
+Datos validos:
+- `ticket`: valor numerico (id de la venta).
+- `from` y `to`: formato YYYY-MM-DD.
+
+Restricciones:
+- Si `ticket` no es numerico o las fechas no son validas, se ignoran los filtros.
+- Se muestran hasta 200 ventas por consulta.
 
 ---
 
@@ -47,7 +109,7 @@ El sistema permite gestionar productos, inventario, clientes y ventas mediante u
 
 ---
 
-## Pruebas
+## Pruebas (caja negra)
 
 - Ejecutar toda la suite:
   ```bash
