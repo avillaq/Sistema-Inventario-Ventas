@@ -2,7 +2,7 @@
 
 El proyecto **Sistema de Inventario y Ventas** es una aplicación web desarrollada con Django y Python. El sistema permite gestionar productos, inventario, clientes y ventas mediante una interfaz web.
 
-![Dashboard del sistema](docs/images/dashboard.png)
+![Dashboard del sistema](https://raw.githubusercontent.com/avillaq/Sistema-Inventario-Ventas/refs/heads/main/docs/images/dashboard.png)
 
 ### Funcionalidades principales
 
@@ -17,7 +17,7 @@ El proyecto **Sistema de Inventario y Ventas** es una aplicación web desarrolla
 
 Punto de venta con carrito, seleccion de cliente y calculo de totales.
 
-![POS - punto de venta](docs/images/pos.png)
+![POS - punto de venta](https://raw.githubusercontent.com/avillaq/Sistema-Inventario-Ventas/refs/heads/main/docs/images/pos.png)
 
 Datos validos:
 - Cantidad por producto: minimo 1 y maximo igual al stock disponible.
@@ -33,7 +33,7 @@ Restricciones:
 
 Gestion de productos, stock, estado y filtros (categoria, marca, bajo stock).
 
-![Inventario](docs/images/inventario.png)
+![Inventario](https://raw.githubusercontent.com/avillaq/Sistema-Inventario-Ventas/refs/heads/main/docs/images/inventario.png)
 
 Datos validos:
 - `stock` y `min_stock` entre 0 y 10,000.
@@ -49,7 +49,7 @@ Restricciones:
 
 Gestion de clientes con busqueda, creacion y edicion.
 
-![Clientes](docs/images/clientes.png)
+![Clientes](https://raw.githubusercontent.com/avillaq/Sistema-Inventario-Ventas/refs/heads/main/docs/images/clientes.png)
 
 Datos validos:
 - `document_id` con 8 digitos numericos.
@@ -64,7 +64,7 @@ Restricciones:
 
 Historial de ventas con filtros por ticket y rango de fechas.
 
-![Historial de ventas](docs/images/ventas.png)
+![Historial de ventas](https://raw.githubusercontent.com/avillaq/Sistema-Inventario-Ventas/refs/heads/main/docs/images/ventas.png)
 
 Datos validos:
 - `ticket`: valor numerico (id de la venta).
